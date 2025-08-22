@@ -1,0 +1,34 @@
+<div class="dashboard-container">
+  <h1 class="dashboard-title">Painel de Controle</h1>
+
+  <div class="modules-grid">
+    <!-- Card de Módulo: Ocorrências (Exemplo Fixo) -->
+    <mat-card class="module-card" [routerLink]="['/occurrences']"> <!-- Exemplo de link futuro -->
+      <mat-card-header>
+        <div class="module-icon-container" style="background-color: #3f51b5;">
+          <i class="material-icons module-icon">assignment</i>
+        </div>
+        <mat-card-title>Ocorrências</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Gerencie e consulte ocorrências e laudos periciais.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card de Módulo: Usuários (Exemplo Dinâmico) -->
+    <!-- ========================================================== -->
+    <!-- Este card SÓ APARECE se o usuário for super_admin -->
+    <!-- ========================================================== -->
+    <mat-card class="module-card" *ngIf="userRole === 'super_admin'" [routerLink]="['/users']">
+      <mat-card-header>
+        <div class="module-icon-container" style="background-color: #f44336;">
+          <i class="material-icons module-icon">group</i>
+        </div>
+        <mat-card-title>Gerenciar Usuários</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Aprove, rejeite e administre os usuários do sistema.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

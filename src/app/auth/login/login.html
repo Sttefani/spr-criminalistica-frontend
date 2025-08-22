@@ -1,0 +1,52 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>
+        <div class="login-header">
+          <i class="material-icons logo-icon">security</i>
+          <h1>SPR-Perícia</h1>
+        </div>
+      </mat-card-title>
+      <mat-card-subtitle>Acesse sua conta para continuar</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- A MUDANÇA ESTÁ NO FORMULÁRIO ABAIXO -->
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <!-- Campo E-mail -->
+        <mat-form-field class="full-width-field" appearance="outline">
+          <!-- MUDANÇA: Label e placeholder ajustados -->
+          <mat-label>E-mail</mat-label>
+          <!-- MUDANÇA: formControlName agora é 'email' -->
+          <input matInput formControlName="email" type="email" placeholder="Digite seu e-mail" required>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+            O e-mail é obrigatório
+          </mat-error>
+          <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+            Formato de e-mail inválido
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Campo Senha (continua o mesmo) -->
+        <mat-form-field class="full-width-field" appearance="outline">
+          <mat-label>Senha</mat-label>
+          <input matInput formControlName="password" type="password" placeholder="Digite sua senha" required>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+            A senha é obrigatória
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" class="login-button" type="submit" [disabled]="loginForm.invalid">
+          Entrar
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer>
+      <div class="register-link">
+        <span>Não tem uma conta?</span>
+        <a routerLink="/register">Cadastre-se aqui</a>
+      </div>
+    </mat-card-footer>
+  </mat-card>
+</div>

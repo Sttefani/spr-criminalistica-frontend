@@ -1,0 +1,28 @@
+.footer {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  color: white;
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+
+// --- AJUSTE DE ALINHAMENTO ---
+.footer-container {
+  // Regras de padronização para alinhar com o cabeçalho
+  width: 100%;
+  max-width: 1400px; // A mesma largura máxima do header
+  margin: 0 auto;     // Centraliza o container
+  padding: 0 24px;   // O mesmo espaçamento lateral do header
+  box-sizing: border-box; // Garante que o padding não afete a largura total
+
+  // Flexbox para centralizar o texto
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-copyright {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}

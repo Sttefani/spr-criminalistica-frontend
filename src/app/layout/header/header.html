@@ -1,0 +1,28 @@
+<!-- O header inteiro só é renderizado se o usuário estiver logado -->
+<header class="header" *ngIf="isLoggedIn$ | async">
+  <div class="header-container">
+    <div class="header-brand">
+      <div class="logo-container">
+        <i class="material-icons logo-icon">security</i>
+      </div>
+      <div class="brand-text">
+        <h1 class="brand-title">SPR-Perícia</h1>
+      </div>
+    </div>
+      <!-- Exibe o nome do usuário se ele existir -->
+      <div class="location-display" *ngIf="userName">
+        <i class="material-icons location-icon">account_circle</i>
+        <span class="location-text">Bem-vindo(a), {{ userName }}</span>
+      </div>
+
+      <div class="datetime-display">
+        <i class="material-icons datetime-icon">schedule</i>
+        <span class="datetime-text">{{ dataHoraAtual | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+      </div>
+
+      <button mat-stroked-button color="warn" class="logout-button" (click)="logout()">
+        <i class="material-icons">logout</i>
+        <span>Logout</span>
+      </button>
+    </div>
+</header>

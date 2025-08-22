@@ -1,0 +1,103 @@
+/* Container Principal da Página de Listagem */
+.list-container {
+  padding: 24px;
+  background: #ffffff;
+  min-height: 100vh;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  .list-title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+    color: #333;
+  }
+}
+
+.filter-field {
+  min-width: 200px;
+}
+
+/* Estilos da Tabela (mat-table) */
+.mat-elevation-z8 {
+  width: 100%;
+  overflow: auto;
+  background: white;
+}
+
+// Estilo para as células de cabeçalho
+.mat-header-cell {
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: #f5f5f5;
+}
+
+/* Estilos de Células Específicas */
+// Container para células com mais de uma linha de informação
+.multi-line-cell {
+  display: flex;
+  flex-direction: column;
+
+  .primary-text {
+    font-weight: 500;
+  }
+
+  .secondary-text {
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.6);
+    margin-top: 2px;
+  }
+}
+
+// "Pílula" de status colorida
+.status-chip {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  display: inline-block;
+
+  &.active {
+    background-color: #28a745;
+  }
+
+  &.pending {
+    background-color: #ffc107;
+    color: #333;
+  }
+
+  &.inactive {
+    background-color: #6c757d;
+  }
+
+  &.rejected {
+    background-color: #dc3545;
+  }
+}
+
+// Célula de Ações
+.actions-cell {
+  button {
+    margin-right: 8px;
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .list-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .filter-field {
+    min-width: auto;
+  }
+}

@@ -1,0 +1,115 @@
+// ======================================================================
+// PASSO 1: A REGRA @use DEVE SER A PRIMEIRA LINHA DO ARQUIVO. SEMPRE.
+// ======================================================================
+@use '@angular/material' as mat;
+
+// ======================================================================
+// PASSO 2: Imports de fontes e outros recursos externos
+// ======================================================================
+@import '@fontsource/roboto/300.css';
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css';
+
+// ======================================================================
+// PASSO 3: Configuração do tema do Angular Material
+// ======================================================================
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+// ======================================================================
+// PASSO 4: Reset e estilos globais LIMPOS
+// ======================================================================
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff !important; // Força fundo branco
+  color: #333333;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow-x: hidden; // Evita scroll horizontal
+}
+
+// Remove qualquer fundo colorido do Angular Material
+app-root {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ffffff !important;
+}
+
+// Remove fundos dos componentes principais
+router-outlet + * {
+  background-color: transparent !important;
+}
+
+// ======================================================================
+// PASSO 5: Customizações do Material Design para fundo branco
+// ======================================================================
+.mat-drawer-container {
+  background-color: #ffffff !important;
+}
+
+.mat-sidenav-content {
+  background-color: #ffffff !important;
+}
+
+.mat-app-background {
+  background-color: #ffffff !important;
+}
+
+// ======================================================================
+// PASSO 6: Classes utilitárias
+// ======================================================================
+.full-width {
+  width: 100% !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.bg-white {
+  background-color: #ffffff !important;
+}
+
+// Customizações globais do Material
+.mat-mdc-form-field {
+  margin-bottom: 16px;
+}
+
+// Remove qualquer gradiente ou cor de fundo indesejada
+.mat-mdc-card {
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+// Scrollbar limpa
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
