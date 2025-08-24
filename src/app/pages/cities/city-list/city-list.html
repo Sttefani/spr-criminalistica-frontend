@@ -1,0 +1,49 @@
+<div class="list-container">
+  <div class="list-header">
+    <h1 class="list-title">Gerenciar Cidades</h1>
+
+    <div>
+      <!-- ========================================================== -->
+      <!-- SEU NOVO BOTÃO PARA VOLTAR AO DASHBOARD -->
+      <!-- ========================================================== -->
+      <button mat-stroked-button color="primary" routerLink="/dashboard" class="header-button">
+        <mat-icon>dashboard</mat-icon>
+        Voltar ao Gabinete
+      </button>
+
+      <button *ngIf="canCreateOrEdit" mat-raised-button color="primary" routerLink="/cities/new" class="header-button">
+        <mat-icon>add</mat-icon>
+        Nova Cidade
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Nome </th>
+        <td mat-cell *matCellDef="let city"> {{city.name}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="state">
+        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <td mat-cell *matCellDef="let city"> {{city.state}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Ações </th>
+        <td mat-cell *matCellDef="let city" class="mat-column-actions">
+          <button *ngIf="canCreateOrEdit" mat-icon-button color="primary" [routerLink]="['/cities/edit', city.id]" title="Editar Cidade">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button *ngIf="isSuperAdmin" mat-icon-button color="warn" (click)="deleteCity(city.id, city.name)" title="Excluir Cidade">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>

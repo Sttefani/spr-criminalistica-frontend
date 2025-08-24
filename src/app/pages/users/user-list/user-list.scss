@@ -1,103 +1,78 @@
-/* Container Principal da Página de Listagem */
+// :host é o próprio elemento <app-user-list>
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // Faz o componente ocupar 100% da altura do seu pai (.content)
+}
+
 .list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   padding: 24px;
-  background: #ffffff;
-  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .list-header {
+  // O cabeçalho da página (título, filtros) tem altura flexível
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-  flex-wrap: wrap;
-
-  .list-title {
-    font-size: 2rem;
-    font-weight: 500;
-    margin: 0;
-    color: #333;
-  }
 }
 
-.filter-field {
-  min-width: 200px;
+.list-controls {
+  // A área dos filtros também tem altura flexível
+  flex-shrink: 0;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
-/* Estilos da Tabela (mat-table) */
-.mat-elevation-z8 {
-  width: 100%;
-  overflow: auto;
-  background: white;
+.search-field, .filter-field {
+  // Estilos dos campos de filtro
 }
 
-// Estilo para as células de cabeçalho
-.mat-header-cell {
-  font-weight: 600;
-  font-size: 0.9rem;
-  background: #f5f5f5;
-}
-
-/* Estilos de Células Específicas */
-// Container para células com mais de uma linha de informação
-.multi-line-cell {
+.table-container {
+  // O container da tabela vai crescer para preencher o resto do espaço
+  flex: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
-
-  .primary-text {
-    font-weight: 500;
-  }
-
-  .secondary-text {
-    font-size: 0.8rem;
-    color: rgba(0, 0, 0, 0.6);
-    margin-top: 2px;
-  }
+  overflow: hidden; // Impede que o container em si role
 }
 
-// "Pílula" de status colorida
-.status-chip {
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: white;
-  display: inline-block;
-
-  &.active {
-    background-color: #28a745;
-  }
-
-  &.pending {
-    background-color: #ffc107;
-    color: #333;
-  }
-
-  &.inactive {
-    background-color: #6c757d;
-  }
-
-  &.rejected {
-    background-color: #dc3545;
-  }
+.loading-shade {
+  // O spinner de carregamento
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-// Célula de Ações
-.actions-cell {
-  button {
-    margin-right: 8px;
-  }
+// Container que permite que a tabela role internamente
+.table-scroll-container {
+  flex: 1;
+  overflow-y: auto; // A ROLAGEM ACONTECE AQUI
 }
 
-// Responsividade
-@media (max-width: 768px) {
-  .list-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-  }
-
-  .filter-field {
-    min-width: auto;
-  }
+table {
+  width: 100%;
 }
+
+mat-paginator {
+  // O paginador tem altura fixa
+  flex-shrink: 0;
+}
+
+// Seus outros estilos (status-chip, etc.) continuam os mesmos
+.status-chip { /* ... */ }
+.actions-cell { /* ... */ }

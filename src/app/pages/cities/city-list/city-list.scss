@@ -1,0 +1,56 @@
+/* ==========================================================================
+   Estilos Padrão para Páginas de Listagem
+   ========================================================================== */
+
+// Container principal da página
+.list-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100%; // Ocupa toda a altura disponível
+  box-sizing: border-box;
+}
+
+// Cabeçalho da página (Título e Botão de Ação)
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-shrink: 0; // Impede que o cabeçalho encolha
+
+  .list-title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+  }
+  .list-header {
+  // ...
+  .header-button {
+    margin-left: 16px; // Adiciona um espaço entre os botões
+  }
+}
+
+// Container da tabela (para aplicar sombra e rolagem)
+.mat-elevation-z8 {
+  width: 100%;
+  overflow: auto; // Adiciona rolagem horizontal se a tabela for muito larga
+}
+
+// Estilos das células da tabela
+.mat-header-cell {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.mat-cell, .mat-header-cell {
+  padding: 0 16px;
+}
+
+// Célula de Ações
+.mat-column-actions {
+  // Define uma largura fixa para a coluna de ações
+  width: 120px;
+  text-align: right;
+}
+}

@@ -1,52 +1,56 @@
 import { Routes } from '@angular/router';
-import { Login } from './auth/login/login';
-import {  RegisterComponent } from './auth/register/register';
-import { Layout } from './layout/layout/layout';
-import { DashboardComponent } from './pages/dashboard/dashboard';
+
+// Componentes
+import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component.';
+import { LayoutComponent } from './layout/layout/layout.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { UserListComponent } from './pages/users/user-list/user-list.component';
+import { UserEditComponent } from './pages/users/user-edit/user-edit.component';
+import { AuthorityListComponent } from './pages/authorities/authority-list/authority-list.component';
+import { AuthorityFormComponent } from './pages/authorities/authority-form/authority-form.component';
+// Adicione aqui os imports para City e Procedure...
+import { CityListComponent } from './pages/cities/city-list/city-list.component';
+import { CityFormComponent } from './pages/cities/city-form/city-form.component';
+import { ProcedureListComponent } from './pages/procedures/procedure-list/procedure-list.component';
+import { ProcedureFormComponent } from './pages/procedures/procedure-form/procedure-form.component';
+
+// Guardas
 import { authGuard } from './auth/auth-guard';
-import { UserListComponent } from './pages/users/user-list/user-list';
-import { UserEditComponent } from './pages/users/user-edit/user-edit';
+import { adminGuard } from './auth/admin-guard';
+import { superAdminGuard } from './auth/super-admin-guard'; // <-- Importe o novo guarda
 
 export const routes: Routes = [
-  // --- GRUPO 1: Rotas de Autenticação (PÚBLICAS) ---
-  // Estas rotas NÃO devem ter o guarda.
-  {
-    path: 'login',
-    component: Login
-  },
-  {
-    path: 'register',
-    component: RegisterComponent
-  },
+  // Rotas Públicas
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
 
-  // --- GRUPO 2: Rotas da Aplicação (PROTEGIDAS) ---
+  // Rotas da Aplicação (Protegidas por Login)
   {
     path: '',
-    component: Layout,
-    // ==========================================================
-    // O GUARDA VEM AQUI
-    // Ele protegerá esta rota "mãe" e TODAS as suas rotas "filhas".
-    // ==========================================================
-    canActivate: [authGuard],
+    component: LayoutComponent,
+    canActivate: [authGuard], // Protege todo o "prédio"
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
-      {
-        path: 'users',
-        component: UserListComponent
-      },
-      { // ✅ Chave de abertura adicionada
-        path: 'users/edit/:id', // O ':id' é um parâmetro dinâmico
-        component: UserEditComponent,
-        canActivate: [authGuard] // Protegida também pelo adminGuard
-      }
+
+      // Módulos de Usuários -> Protegido pelo superAdminGuard
+      { path: 'users', component: UserListComponent, canActivate: [superAdminGuard] },
+      { path: 'users/edit/:id', component: UserEditComponent, canActivate: [superAdminGuard] },
+
+      // Módulos Administrativos Gerais -> Protegidos pelo adminGuard
+      { path: 'authorities', component: AuthorityListComponent, canActivate: [adminGuard] },
+      { path: 'authorities/new', component: AuthorityFormComponent, canActivate: [adminGuard] },
+      { path: 'authorities/edit/:id', component: AuthorityFormComponent, canActivate: [adminGuard] },
+      { path: 'cities', component: CityListComponent, canActivate: [adminGuard] },
+      { path: 'cities/new', component: CityFormComponent, canActivate: [adminGuard] },
+      { path: 'cities/edit/:id', component: CityFormComponent, canActivate: [adminGuard] },
+      { path: 'procedures', component: ProcedureListComponent, canActivate: [adminGuard] },
+      { path: 'procedures/new', component: ProcedureFormComponent, canActivate: [adminGuard] },
+      { path: 'procedures/edit/:id', component: ProcedureFormComponent, canActivate: [adminGuard] },
     ]
   },
 
-  // --- GRUPO 3: Rota Coringa ---
-  {
-    path: '**',
-    redirectTo: 'login',
-    pathMatch: 'full'
-  }
+  // Rota Coringa
+  { path: '**', redirectTo: 'login', pathMatch: 'full' }
 ];

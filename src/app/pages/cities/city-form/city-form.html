@@ -1,0 +1,55 @@
+<div class="form-container">
+  <a mat-button routerLink="/cities" class="back-button">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar para a Lista de Cidades
+  </a>
+
+  @if (!isLoading) {
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ pageTitle }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="city-form">
+          <!-- Campo Nome da Cidade -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Nome da Cidade</mat-label>
+            <input matInput formControlName="name" required>
+            @if (form.get('name')?.hasError('required')) {
+              <mat-error>
+                O nome é obrigatório.
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Campo Estado (UF) -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Estado (UF)</mat-label>
+            <input matInput formControlName="state" placeholder="Ex: RR, SP, RJ" required maxlength="2">
+            @if (form.get('state')?.hasError('required')) {
+              <mat-error>
+                O estado é obrigatório.
+              </mat-error>
+            }
+            @if (form.get('state')?.hasError('minlength') || form.get('state')?.hasError('maxlength')) {
+              <mat-error>
+                O estado deve ter 2 caracteres.
+              </mat-error>
+            }
+          </mat-form-field>
+        </form>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid">
+          Salvar
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  @if (isLoading) {
+    <div class="spinner-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
+</div>

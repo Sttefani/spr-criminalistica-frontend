@@ -1,56 +1,95 @@
+/* Container principal da página do dashboard */
 .dashboard-container {
   padding: 24px;
 }
 
+/* Título principal "Painel de Controle" */
 .dashboard-title {
   font-size: 2rem;
   font-weight: 500;
   margin-bottom: 24px;
 }
 
+/* A grade que organiza todos os cards de módulos */
 .modules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+  // A MUDANÇA PRINCIPAL: Cards com tamanho mínimo de 240px
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  // Espaçamento entre os cards
+  gap: 20px;
 }
 
+/* Estilo base para TODOS os cards de módulo */
 .module-card {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
+  // Efeito de "levantar" ao passar o mouse
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
   }
 
+  // Ajustes no cabeçalho do card
   mat-card-header {
     display: flex;
     align-items: center;
-    padding-bottom: 16px;
+    padding-bottom: 12px;
   }
 
+  // O container do ícone
   .module-icon-container {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    margin-right: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 16px;
     flex-shrink: 0;
 
     .module-icon {
+      font-size: 30px;
       color: white;
-      font-size: 36px;
     }
   }
 
+  // O título do card
   mat-card-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
   }
 
+  // O texto de descrição do card
   mat-card-content {
+    font-size: 0.9rem;
     color: rgba(0, 0, 0, 0.6);
   }
+}
+
+/* ========================================================== */
+/* ESTILOS ADICIONAIS APLICADOS QUANDO O CARD ESTÁ DESABILITADO */
+/* Estas regras são separadas da regra .module-card principal. */
+/* ========================================================== */
+.module-card.disabled {
+  cursor: not-allowed;
+  background-color: #f5f5f5; // Fundo cinza
+  opacity: 0.7;
+
+  // Remove o efeito de hover
+  &:hover {
+    transform: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  }
+
+  // Deixa o container do ícone cinza
+  .module-icon-container {
+    background-color: #bdbdbd !important;
+  }
+}
+
+/* Estilo para o texto "Acesso restrito..." */
+.disabled-text {
+  font-style: italic;
+  color: #757575;
 }

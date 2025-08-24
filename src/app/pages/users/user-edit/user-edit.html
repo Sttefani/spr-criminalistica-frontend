@@ -7,154 +7,184 @@
     <div class="header-content">
       <h1>Editar Usuário</h1>
       <!-- Status do usuário -->
-      <div *ngIf="userData" class="user-status" [ngClass]="getStatusClass()">
-        <mat-icon>{{ getStatusIcon() }}</mat-icon>
-        <span>{{ getStatusText() }}</span>
-      </div>
+      @if (userData) {
+        <div class="user-status" [ngClass]="getStatusClass()">
+          <mat-icon>{{ getStatusIcon() }}</mat-icon>
+          <span>{{ getStatusText() }}</span>
+        </div>
+      }
     </div>
   </div>
 
   <!-- Card de informações do usuário -->
-  <mat-card *ngIf="!isLoading" class="user-card">
+  @if (!isLoading) {
+    <mat-card class="user-card">
 
-    <!-- Alerta para Super Admin se usuário está pendente -->
-    <div *ngIf="isSuperAdmin && isPending()" class="approval-alert">
-      <mat-icon>warning</mat-icon>
-      <div class="alert-content">
-        <h3>Usuário Pendente de Aprovação</h3>
-        <p>Este usuário está aguardando aprovação. Selecione um perfil e aprove para liberar o acesso.</p>
-      </div>
-    </div>
+      <!-- Alerta para Super Admin se usuário está pendente -->
+      @if (isSuperAdmin && isPending()) {
+        <div class="approval-alert">
+          <mat-icon>warning</mat-icon>
+          <div class="alert-content">
+            <h3>Usuário Pendente de Aprovação</h3>
+            <p>Este usuário está aguardando aprovação. Selecione um perfil e aprove para liberar o acesso.</p>
+          </div>
+        </div>
+      }
 
-    <!-- Alerta para usuário rejeitado -->
-    <div *ngIf="isSuperAdmin && isRejected()" class="rejection-alert">
-      <mat-icon>error</mat-icon>
-      <div class="alert-content">
-        <h3>Usuário Rejeitado</h3>
-        <p>Este usuário foi rejeitado. Você pode reativá-lo selecionando um perfil e aprovando novamente.</p>
-      </div>
-    </div>
+      <!-- Alerta para usuário rejeitado -->
+      @if (isSuperAdmin && isRejected()) {
+        <div class="rejection-alert">
+          <mat-icon>error</mat-icon>
+          <div class="alert-content">
+            <h3>Usuário Rejeitado</h3>
+            <p>Este usuário foi rejeitado. Você pode reativá-lo selecionando um perfil e aprovando novamente.</p>
+          </div>
+        </div>
+      }
 
-    <mat-card-content>
-      <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="form">
+      <mat-card-content>
+        <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="form">
 
-        <!-- Nome Completo -->
-        <mat-form-field appearance="outline">
-          <mat-label>Nome Completo</mat-label>
-          <input matInput formControlName="name" placeholder="Digite o nome completo">
-          <mat-icon matPrefix>person</mat-icon>
-          <mat-error *ngIf="hasError('name', 'required')">
-            Nome é obrigatório
-          </mat-error>
-          <mat-error *ngIf="hasError('name', 'minlength')">
-            Nome deve ter pelo menos 2 caracteres
-          </mat-error>
-        </mat-form-field>
+          <!-- Nome Completo -->
+          <mat-form-field appearance="outline">
+            <mat-label>Nome Completo</mat-label>
+            <input matInput formControlName="name" placeholder="Digite o nome completo">
+            <mat-icon matPrefix>person</mat-icon>
+            @if (hasError('name', 'required')) {
+              <mat-error>
+                Nome é obrigatório
+              </mat-error>
+            }
+            @if (hasError('name', 'minlength')) {
+              <mat-error>
+                Nome deve ter pelo menos 2 caracteres
+              </mat-error>
+            }
+          </mat-form-field>
 
-        <!-- E-mail -->
-        <mat-form-field appearance="outline">
-          <mat-label>E-mail</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="exemplo@email.com">
-          <mat-icon matPrefix>email</mat-icon>
-          <mat-error *ngIf="hasError('email', 'required')">
-            E-mail é obrigatório
-          </mat-error>
-          <mat-error *ngIf="hasError('email', 'email')">
-            E-mail inválido
-          </mat-error>
-        </mat-form-field>
+          <!-- E-mail -->
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <input matInput formControlName="email" type="email" placeholder="exemplo@email.com">
+            <mat-icon matPrefix>email</mat-icon>
+            @if (hasError('email', 'required')) {
+              <mat-error>
+                E-mail é obrigatório
+              </mat-error>
+            }
+            @if (hasError('email', 'email')) {
+              <mat-error>
+                E-mail inválido
+              </mat-error>
+            }
+          </mat-form-field>
 
-        <!-- CPF -->
-        <mat-form-field appearance="outline">
-          <mat-label>CPF</mat-label>
-          <input matInput formControlName="cpf" placeholder="000.000.000-00">
-          <mat-icon matPrefix>badge</mat-icon>
-          <mat-error *ngIf="hasError('cpf', 'required')">
-            CPF é obrigatório
-          </mat-error>
-        </mat-form-field>
+          <!-- CPF -->
+          <mat-form-field appearance="outline">
+            <mat-label>CPF</mat-label>
+            <input matInput formControlName="cpf" placeholder="000.000.000-00">
+            <mat-icon matPrefix>badge</mat-icon>
+            @if (hasError('cpf', 'required')) {
+              <mat-error>
+                CPF é obrigatório
+              </mat-error>
+            }
+          </mat-form-field>
 
-        <!-- Telefone -->
-        <mat-form-field appearance="outline">
-          <mat-label>Telefone</mat-label>
-          <input matInput formControlName="phone" placeholder="(00) 00000-0000">
-          <mat-icon matPrefix>phone</mat-icon>
-        </mat-form-field>
+          <!-- Telefone -->
+          <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input matInput formControlName="phone" placeholder="(00) 00000-0000">
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
 
-        <!-- Instituição -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Instituição</mat-label>
-          <input matInput formControlName="institution" placeholder="Nome da instituição">
-          <mat-icon matPrefix>business</mat-icon>
-        </mat-form-field>
+          <!-- Instituição -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Instituição</mat-label>
+            <input matInput formControlName="institution" placeholder="Nome da instituição">
+            <mat-icon matPrefix>business</mat-icon>
+          </mat-form-field>
 
-        <!-- Perfil -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Perfil</mat-label>
-          <mat-select formControlName="role">
-            <mat-option value="">Selecione um perfil</mat-option>
-            <mat-option *ngFor="let role of roles" [value]="role.value">
-              {{ role.viewValue }}
-            </mat-option>
-          </mat-select>
-          <mat-icon matPrefix>security</mat-icon>
-          <mat-error *ngIf="hasError('role', 'required')">
-            Perfil é obrigatório
-          </mat-error>
-        </mat-form-field>
+          <!-- Perfil -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Perfil</mat-label>
+            <mat-select formControlName="role">
+              <mat-option value="">Selecione um perfil</mat-option>
+              @for (role of roles; track role.value) {
+                <mat-option [value]="role.value">
+                  {{ role.viewValue }}
+                </mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>security</mat-icon>
+            @if (hasError('role', 'required')) {
+              <mat-error>
+                Perfil é obrigatório
+              </mat-error>
+            }
+          </mat-form-field>
 
-      </form>
-    </mat-card-content>
+        </form>
+      </mat-card-content>
 
-    <!-- Divisor para separar ações de aprovação -->
-    <mat-divider *ngIf="isSuperAdmin && (isPending() || isRejected())"></mat-divider>
+      <!-- Divisor para separar ações de aprovação -->
+      @if (isSuperAdmin && (isPending() || isRejected())) {
+        <mat-divider></mat-divider>
+      }
 
-    <!-- Ações de aprovação (apenas para Super Admin) -->
-    <div *ngIf="isSuperAdmin && (isPending() || isRejected())" class="approval-actions">
-      <h3>Ações de Aprovação</h3>
-      <div class="approval-buttons">
-        <button mat-raised-button color="primary"
-                (click)="approveUser()"
-                [disabled]="editForm.get('role')?.invalid"
-                class="approve-btn">
-          <mat-icon>check_circle</mat-icon>
-          {{ isRejected() ? 'Reativar Usuário' : 'Aprovar Usuário' }}
+      <!-- Ações de aprovação (apenas para Super Admin) -->
+      @if (isSuperAdmin && (isPending() || isRejected())) {
+        <div class="approval-actions">
+          <h3>Ações de Aprovação</h3>
+          <div class="approval-buttons">
+            <button mat-raised-button color="primary"
+                    (click)="approveUser()"
+                    [disabled]="editForm.get('role')?.invalid"
+                    class="approve-btn">
+              <mat-icon>check_circle</mat-icon>
+              {{ isRejected() ? 'Reativar Usuário' : 'Aprovar Usuário' }}
+            </button>
+            @if (isPending()) {
+              <button mat-raised-button color="warn"
+                      (click)="rejectUser()"
+                      class="reject-btn">
+                <mat-icon>cancel</mat-icon>
+                Rejeitar Usuário
+              </button>
+            }
+          </div>
+          <p class="approval-hint">
+            <mat-icon>info</mat-icon>
+            Selecione um perfil antes de aprovar o usuário.
+          </p>
+        </div>
+      }
+
+      <!-- Ações regulares -->
+      <mat-card-actions>
+        <button mat-button routerLink="/users">
+          <mat-icon>close</mat-icon>
+          Cancelar
         </button>
-        <button *ngIf="isPending()"
-                mat-raised-button color="warn"
-                (click)="rejectUser()"
-                class="reject-btn">
-          <mat-icon>cancel</mat-icon>
-          Rejeitar Usuário
-        </button>
-      </div>
-      <p class="approval-hint">
-        <mat-icon>info</mat-icon>
-        Selecione um perfil antes de aprovar o usuário.
-      </p>
-    </div>
 
-    <!-- Ações regulares -->
-    <mat-card-actions>
-      <button mat-button routerLink="/users">
-        <mat-icon>close</mat-icon>
-        Cancelar
-      </button>
-
-      <!-- Botão de salvar apenas para usuários ativos/inativos -->
-      <button *ngIf="isActive() || isInactive()"
-              mat-raised-button color="primary"
-              (click)="onSubmit()"
-              [disabled]="editForm.invalid">
-        <mat-icon>save</mat-icon>
-        Salvar Alterações
-      </button>
-    </mat-card-actions>
-  </mat-card>
+        <!-- Botão de salvar apenas para usuários ativos/inativos -->
+        @if (isActive() || isInactive()) {
+          <button mat-raised-button color="primary"
+                  (click)="onSubmit()"
+                  [disabled]="editForm.invalid">
+            <mat-icon>save</mat-icon>
+            Salvar Alterações
+          </button>
+        }
+      </mat-card-actions>
+    </mat-card>
+  }
 
   <!-- Loading -->
-  <div *ngIf="isLoading" class="loading">
-    <mat-spinner></mat-spinner>
-    <p>Carregando informações do usuário...</p>
-  </div>
+  @if (isLoading) {
+    <div class="loading">
+      <mat-spinner></mat-spinner>
+      <p>Carregando informações do usuário...</p>
+    </div>
+  }
 </div>

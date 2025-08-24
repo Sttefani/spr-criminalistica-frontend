@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
-// ==========================================================
-// 1. IMPORTAÇÃO NECESSÁRIA PARA CONSTRUIR URLs COM PARÂMETROS
-// ==========================================================
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,62 +8,81 @@ import { AuthService } from './auth.service';
 export class UserService {
   private apiUrl = 'http://localhost:3000/users';
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+  constructor(private http: HttpClient) {}
 
+  /**
+   * Monta o cabeçalho de autorização lendo o token do localStorage.
+   */
   private getAuthHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
+    const token = localStorage.getItem('auth_token');
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
   }
 
-  // ==========================================================
-  // 2. A CORREÇÃO NO MÉTODO getUsers
-  // Agora ele aceita um parâmetro opcional 'status'.
-  // ==========================================================
-  getUsers(status?: string): Observable<any> {
+  /**
+   * Busca a lista de usuários da API com paginação e filtros.
+   */
+  getUsers(page: number, limit: number, status: string, search: string): Observable<any> {
     const headers = this.getAuthHeaders();
-    let params = new HttpParams();
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
 
-    // Se um status for fornecido e não for 'all', o adicionamos como um
-    // parâmetro de query na URL (ex: /users?status=pending)
     if (status && status !== 'all') {
       params = params.append('status', status);
     }
+    if (search) {
+      params = params.append('search', search);
+    }
 
-    // A requisição GET agora inclui os cabeçalhos e os parâmetros
     return this.http.get(this.apiUrl, { headers, params });
   }
 
-  // O resto dos seus métodos (findOne, update, approveUser, etc.)
-  // permanecem os mesmos e já estão corretos.
+  /**
+   * Busca os dados de um único usuário pelo ID.
+   */
   findOne(id: string): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.get(`${this.apiUrl}/${id}`, { headers });
   }
 
+  /**
+   * Atualiza os dados de um usuário (usado pelo formulário de edição).
+   */
   update(id: string, userData: any): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.patch(`${this.apiUrl}/${id}`, userData, { headers });
   }
 
+  /**
+   * Aprova um usuário pendente, atribuindo um perfil.
+   */
   approveUser(userId: string, role: string): Observable<any> {
     const headers = this.getAuthHeaders();
     const body = { role };
     return this.http.patch(`${this.apiUrl}/${userId}/approve`, body, { headers });
   }
 
+  /**
+   * Rejeita um usuário pendente.
+   */
   rejectUser(userId: string): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.patch(`${this.apiUrl}/${userId}/reject`, {}, { headers });
   }
 
+  /**
+   * Atualiza o status de um usuário (para 'active' ou 'inactive').
+   */
   updateUserStatus(userId: string, status: string): Observable<any> {
     const headers = this.getAuthHeaders();
     const body = { status };
     return this.http.patch(`${this.apiUrl}/${userId}`, body, { headers });
   }
+  getAllUsers(): Observable<any> {
+  const headers = this.getAuthHeaders();
+  // Chama o endpoint sem parâmetros de paginação
+  return this.http.get(this.apiUrl, { headers });
+}
 }

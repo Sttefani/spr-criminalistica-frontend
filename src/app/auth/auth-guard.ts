@@ -6,17 +6,13 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Apenas verifica se o usuário está logado
-  const isLoggedIn = !!authService.getToken();
-
-  if (!isLoggedIn) {
-    console.log('Usuário não logado, redirecionando para login');
+  // Apenas verifica se o usuário tem um token
+  if (authService.getToken()) {
+    // Se tem token, está logado. Permite o acesso.
+    return true;
+  } else {
+    // Se não tem token, não está logado. Redireciona para /login.
     router.navigate(['/login']);
     return false;
   }
-
-  // Se estiver logado, permite acesso a qualquer rota
-  // O controle de permissões será feito no backend
-  console.log('Usuário logado, acesso permitido');
-  return true;
 };

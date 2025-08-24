@@ -1,12 +1,12 @@
 <div class="dashboard-container">
-  <h1 class="dashboard-title">Painel de Controle</h1>
+  <h1 class="dashboard-title">Gabinete Virtual</h1>
 
   <div class="modules-grid">
-    <!-- Card de Módulo: Ocorrências (Exemplo Fixo) -->
-    <mat-card class="module-card" [routerLink]="['/occurrences']"> <!-- Exemplo de link futuro -->
+    <!-- Card de Ocorrências (Sempre ativo) -->
+    <mat-card class="module-card" [routerLink]="['/occurrences']">
       <mat-card-header>
         <div class="module-icon-container" style="background-color: #3f51b5;">
-          <i class="material-icons module-icon">assignment</i>
+          <mat-icon class="module-icon">assignment</mat-icon>
         </div>
         <mat-card-title>Ocorrências</mat-card-title>
       </mat-card-header>
@@ -15,19 +15,83 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Card de Módulo: Usuários (Exemplo Dinâmico) -->
-    <!-- ========================================================== -->
-    <!-- Este card SÓ APARECE se o usuário for super_admin -->
-    <!-- ========================================================== -->
-    <mat-card class="module-card" *ngIf="userRole === 'super_admin'" [routerLink]="['/users']">
+    <!-- Card de Procedimentos (Controlado por 'canAccessAdminModules') -->
+    <mat-card class="module-card"
+              [class.disabled]="!canAccessAdminModules"
+              [routerLink]="canAccessAdminModules ? ['/procedures'] : null">
+      <mat-card-header>
+        <div class="module-icon-container" style="background-color: #ff9800;">
+          <mat-icon class="module-icon">biotech</mat-icon>
+        </div>
+        <mat-card-title>Procedimentos</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (canAccessAdminModules) {
+          <p>Gerencie os tipos de procedimentos periciais.</p>
+        }
+        @if (!canAccessAdminModules) {
+          <p class="disabled-text">Acesso restrito a Administradores.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card de Autoridades (Controlado por 'canAccessAdminModules') -->
+    <mat-card class="module-card"
+              [class.disabled]="!canAccessAdminModules"
+              [routerLink]="canAccessAdminModules ? ['/authorities'] : null">
+      <mat-card-header>
+        <div class="module-icon-container" style="background-color: #009688;">
+          <mat-icon class="module-icon">gavel</mat-icon>
+        </div>
+        <mat-card-title>Autoridades</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (canAccessAdminModules) {
+          <p>Consulte e gerencie autoridades solicitantes.</p>
+        }
+        @if (!canAccessAdminModules) {
+          <p class="disabled-text">Acesso restrito a Serv. Administrativo.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card de Cidades (Controlado por 'canAccessAdminModules') -->
+    <mat-card class="module-card"
+              [class.disabled]="!canAccessAdminModules"
+              [routerLink]="canAccessAdminModules ? ['/cities'] : null">
+      <mat-card-header>
+        <div class="module-icon-container" style="background-color: #4caf50;">
+          <mat-icon class="module-icon">location_city</mat-icon>
+        </div>
+        <mat-card-title>Cidades</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (canAccessAdminModules) {
+          <p>Gerencie as cidades de atuação.</p>
+        }
+        @if (!canAccessAdminModules) {
+          <p class="disabled-text">Acesso restrito a Serv. Administrativo.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Card de Usuários (Controlado especificamente por 'super_admin') -->
+    <mat-card class="module-card"
+              [class.disabled]="userRole !== 'super_admin'"
+              [routerLink]="userRole === 'super_admin' ? ['/users'] : null">
       <mat-card-header>
         <div class="module-icon-container" style="background-color: #f44336;">
-          <i class="material-icons module-icon">group</i>
+          <mat-icon class="module-icon">group</mat-icon>
         </div>
         <mat-card-title>Gerenciar Usuários</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p>Aprove, rejeite e administre os usuários do sistema.</p>
+        @if (userRole === 'super_admin') {
+          <p>Aprove, rejeite e administre os usuários do sistema.</p>
+        }
+        @if (userRole !== 'super_admin') {
+          <p class="disabled-text">Acesso restrito a Super Administradores.</p>
+        }
       </mat-card-content>
     </mat-card>
   </div>
