@@ -1,24 +1,32 @@
 import { Routes } from '@angular/router';
 
-// Componentes
+// Componentes Principais
+import { LayoutComponent } from './layout/layout/layout.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component.';
-import { LayoutComponent } from './layout/layout/layout.component';
+
+// Componentes das Páginas
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { UserListComponent } from './pages/users/user-list/user-list.component';
 import { UserEditComponent } from './pages/users/user-edit/user-edit.component';
 import { AuthorityListComponent } from './pages/authorities/authority-list/authority-list.component';
 import { AuthorityFormComponent } from './pages/authorities/authority-form/authority-form.component';
-// Adicione aqui os imports para City e Procedure...
 import { CityListComponent } from './pages/cities/city-list/city-list.component';
 import { CityFormComponent } from './pages/cities/city-form/city-form.component';
 import { ProcedureListComponent } from './pages/procedures/procedure-list/procedure-list.component';
 import { ProcedureFormComponent } from './pages/procedures/procedure-form/procedure-form.component';
+import { LocationListComponent } from './pages/locations/location-list/location-list.component';
+import { LocationFormComponent } from './pages/locations/location-form/location-form.component';
+import { OccurrenceClassificationListComponent } from './pages/occurrence-classifications/occurrence-classification-list/occurrence-classification-list.component';
+import { OccurrenceClassificationFormComponent } from './pages/occurrence-classifications/occurrence-classification-form/occurrence-classification-form.component';
+import { ExamTypeFormComponent } from './pages/exam-types/exam-type-form/exam-type-form.component';
+import { ExamTypeListComponent } from './pages/exam-types/exam-type-list/exam-type-list.component';
 
-// Guardas
+// Guardas de Rota
 import { authGuard } from './auth/auth-guard';
 import { adminGuard } from './auth/admin-guard';
-import { superAdminGuard } from './auth/super-admin-guard'; // <-- Importe o novo guarda
+import { superAdminGuard } from './auth/super-admin-guard';
+import { editingAccessGuard } from './auth/editing-access-guard'; // <-- Importe o novo guarda
 
 export const routes: Routes = [
   // Rotas Públicas
@@ -29,16 +37,12 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
-    canActivate: [authGuard], // Protege todo o "prédio"
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
 
-      // Módulos de Usuários -> Protegido pelo superAdminGuard
-      { path: 'users', component: UserListComponent, canActivate: [superAdminGuard] },
-      { path: 'users/edit/:id', component: UserEditComponent, canActivate: [superAdminGuard] },
-
-      // Módulos Administrativos Gerais -> Protegidos pelo adminGuard
+      // Módulos Administrativos (SUPER_ADMIN, SERVIDOR_ADMINISTRATIVO)
       { path: 'authorities', component: AuthorityListComponent, canActivate: [adminGuard] },
       { path: 'authorities/new', component: AuthorityFormComponent, canActivate: [adminGuard] },
       { path: 'authorities/edit/:id', component: AuthorityFormComponent, canActivate: [adminGuard] },
@@ -48,6 +52,21 @@ export const routes: Routes = [
       { path: 'procedures', component: ProcedureListComponent, canActivate: [adminGuard] },
       { path: 'procedures/new', component: ProcedureFormComponent, canActivate: [adminGuard] },
       { path: 'procedures/edit/:id', component: ProcedureFormComponent, canActivate: [adminGuard] },
+      { path: 'locations', component: LocationListComponent, canActivate: [adminGuard] },
+      { path: 'locations/new', component: LocationFormComponent, canActivate: [adminGuard] },
+      { path: 'locations/edit/:id', component: LocationFormComponent, canActivate: [adminGuard] },
+      { path: 'occurrence-classifications', component: OccurrenceClassificationListComponent, canActivate: [adminGuard] },
+      { path: 'occurrence-classifications/new', component: OccurrenceClassificationFormComponent, canActivate: [adminGuard] },
+      { path: 'occurrence-classifications/edit/:id', component: OccurrenceClassificationFormComponent, canActivate: [adminGuard] },
+
+      // Módulos de Edição Estendida (SUPER_ADMIN, SERVIDOR_ADMINISTRATIVO, PERITO_OFICIAL)
+      { path: 'exam-types', component: ExamTypeListComponent }, // A lista é visível para todos os logados
+      { path: 'exam-types/new', component: ExamTypeFormComponent, canActivate: [editingAccessGuard] },
+      { path: 'exam-types/edit/:id', component: ExamTypeFormComponent, canActivate: [editingAccessGuard] },
+
+      // Módulos APENAS para SUPER_ADMIN
+      { path: 'users', component: UserListComponent, canActivate: [superAdminGuard] },
+      { path: 'users/edit/:id', component: UserEditComponent, canActivate: [superAdminGuard] },
     ]
   },
 

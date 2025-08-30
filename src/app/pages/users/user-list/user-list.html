@@ -1,15 +1,21 @@
+<!-- Container principal da página -->
 <div class="list-container">
+
+  <!-- Cabeçalho da página -->
   <div class="list-header">
     <h1 class="list-title">Gerenciamento de Usuários</h1>
   </div>
 
+  <!-- Container para os controles de filtro -->
   <div class="list-controls">
+    <!-- Campo de Busca -->
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Buscar por Nome ou Email</mat-label>
       <input matInput [formControl]="searchControl" placeholder="Digite para buscar...">
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
 
+    <!-- Filtro de Status -->
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Filtrar por Status</mat-label>
       <mat-select [formControl]="statusControl">
@@ -20,86 +26,98 @@
         <mat-option value="rejected">Rejeitados</mat-option>
       </mat-select>
     </mat-form-field>
+
+    <!-- Filtro "toggle" para Autoridades -->
+    <mat-slide-toggle [formControl]="authorityToggleControl" class="authority-toggle">
+      Mostrar Apenas Autoridades
+    </mat-slide-toggle>
   </div>
 
+  <!-- Container que envolve a tabela e o paginador -->
   <div class="table-container mat-elevation-z8">
+
+    <!-- Spinner de Carregamento -->
     <div *ngIf="isLoadingResults" class="loading-shade">
       <mat-spinner></mat-spinner>
     </div>
 
-    <table mat-table [dataSource]="dataSource">
-      <!-- Coluna Nome -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Nome </th>
-        <td mat-cell *matCellDef="let user"> {{ user.name }} </td>
-      </ng-container>
+    <!-- Div para controlar a rolagem interna da tabela -->
+    <div class="table-scroll-container">
+      <table mat-table [dataSource]="dataSource">
+        <!-- Coluna Nome -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Nome </th>
+          <td mat-cell *matCellDef="let user"> {{ user.name }} </td>
+        </ng-container>
 
-      <!-- Coluna Email -->
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef> Email </th>
-        <td mat-cell *matCellDef="let user"> {{ user.email }} </td>
-      </ng-container>
+        <!-- Coluna Email -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <td mat-cell *matCellDef="let user"> {{ user.email }} </td>
+        </ng-container>
 
-      <!-- Coluna CPF -->
-      <ng-container matColumnDef="cpf">
-        <th mat-header-cell *matHeaderCellDef> CPF </th>
-        <td mat-cell *matCellDef="let user"> {{ user.cpf }} </td>
-      </ng-container>
+        <!-- Coluna CPF -->
+        <ng-container matColumnDef="cpf">
+          <th mat-header-cell *matHeaderCellDef> CPF </th>
+          <td mat-cell *matCellDef="let user"> {{ user.cpf }} </td>
+        </ng-container>
 
-      <!-- Coluna Instituição -->
-      <ng-container matColumnDef="institution">
-        <th mat-header-cell *matHeaderCellDef> Instituição </th>
-        <td mat-cell *matCellDef="let user"> {{ user.institution || 'Não informado' }} </td>
-      </ng-container>
+        <!-- Coluna Instituição -->
+        <ng-container matColumnDef="institution">
+          <th mat-header-cell *matHeaderCellDef> Instituição </th>
+          <td mat-cell *matCellDef="let user"> {{ user.institution || 'Não informado' }} </td>
+        </ng-container>
 
-      <!-- Coluna Perfil -->
-      <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef> Perfil </th>
-        <td mat-cell *matCellDef="let user"> {{ formatUserRole(user.role) }} </td>
-      </ng-container>
+        <!-- Coluna Perfil -->
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef> Perfil </th>
+          <td mat-cell *matCellDef="let user"> {{ formatUserRole(user.role) }} </td>
+        </ng-container>
 
-      <!-- Coluna Status -->
-      <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef> Status </th>
-        <td mat-cell *matCellDef="let user">
-          <span class="status-chip" [ngClass]="user.status.toLowerCase()">
-            {{ user.status | titlecase }}
-          </span>
-        </td>
-      </ng-container>
+        <!-- Coluna Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let user">
+            <span class="status-chip" [ngClass]="user.status.toLowerCase()">
+              {{ user.status | titlecase }}
+            </span>
+          </td>
+        </ng-container>
 
-      <!-- Coluna Ações -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Ações </th>
-        <td mat-cell *matCellDef="let user">
-          <ng-container *ngIf="user.status === 'pending'">
-            <button mat-icon-button color="primary" title="Aprovar Usuário" (click)="approveUser(user)">
-              <mat-icon>check_circle</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" title="Rejeitar Usuário" (click)="rejectUser(user)">
-              <mat-icon>cancel</mat-icon>
-            </button>
-          </ng-container>
-          <ng-container *ngIf="user.status === 'active' || user.status === 'inactive'">
-            <button *ngIf="user.status === 'active'" mat-icon-button color="warn" title="Inativar Usuário" (click)="toggleUserStatus(user, 'inactive')">
-              <mat-icon>toggle_off</mat-icon>
-            </button>
-            <button *ngIf="user.status === 'inactive'" mat-icon-button color="primary" title="Ativar Usuário" (click)="toggleUserStatus(user, 'active')">
-              <mat-icon>toggle_on</mat-icon>
-            </button>
-            <button mat-icon-button color="primary" title="Editar Usuário" [routerLink]="['/users/edit', user.id]">
-              <mat-icon>edit</mat-icon>
-            </button>
-          </ng-container>
-        </td>
-      </ng-container>
+        <!-- Coluna Ações -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Ações </th>
+          <td mat-cell *matCellDef="let user">
+            <ng-container *ngIf="user.status === 'pending'">
+              <button mat-icon-button color="primary" title="Aprovar Usuário" (click)="approveUser(user)">
+                <mat-icon>check_circle</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" title="Rejeitar Usuário" (click)="rejectUser(user)">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="user.status === 'active' || user.status === 'inactive'">
+              <button *ngIf="user.status === 'active'" mat-icon-button color="warn" title="Inativar Usuário" (click)="toggleUserStatus(user, 'inactive')">
+                <mat-icon>toggle_off</mat-icon>
+              </button>
+              <button *ngIf="user.status === 'inactive'" mat-icon-button color="primary" title="Ativar Usuário" (click)="toggleUserStatus(user, 'active')">
+                <mat-icon>toggle_on</mat-icon>
+              </button>
+              <button mat-icon-button color="primary" title="Editar Usuário" [routerLink]="['/users/edit', user.id]">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </ng-container>
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
 
+    <!-- Paginador -->
     <mat-paginator [length]="totalData" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons>
     </mat-paginator>
   </div>
-</div>
 
+</div>

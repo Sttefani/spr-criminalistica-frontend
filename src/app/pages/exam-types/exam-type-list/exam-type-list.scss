@@ -1,0 +1,154 @@
+/* ==========================================================================
+   Estilos Padrão para Páginas de Listagem
+   ========================================================================== */
+// :host é o próprio elemento <app-exam-type-list>
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // Ocupa toda a altura do seu pai (.content)
+}
+
+// Container principal da página
+.list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+// Cabeçalho da página (Título e Botões de Ação)
+.list-header {
+  flex-shrink: 0; // Impede que o cabeçalho encolha
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap; // Permite quebrar linha em telas pequenas
+  gap: 16px;
+
+  .list-title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .header-button {
+    margin-left: 16px;
+  }
+}
+
+// Container para os controles de busca/filtro
+.list-controls {
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+
+.search-field {
+  width: 40%;
+  min-width: 250px;
+}
+
+// Container da tabela (para aplicar sombra e posicionar o spinner)
+.table-container {
+  flex: 1; // Faz a tabela crescer para preencher o espaço
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; // Impede que o container em si role
+}
+
+// Spinner de carregamento
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Container que permite que a tabela role internamente
+.table-scroll-container {
+  flex: 1;
+  overflow-x: auto; // ADICIONEI: Permite scroll horizontal
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 600px; // ADICIONEI: Largura mínima da tabela
+}
+
+// Células do cabeçalho da tabela
+.mat-header-cell {
+  font-weight: 600;
+}
+
+// CORREÇÃO PRINCIPAL: Coluna de Ações
+.mat-column-actions {
+  width: 200px !important; // Reduzi de 280px para 200px (mais otimizado)
+  min-width: 200px !important; // Garante largura mínima
+  text-align: center !important; // Centraliza em vez de right
+  padding: 0 8px !important;
+}
+
+// ADICIONEI: Estilos dos botões de ação
+.mat-column-actions button {
+  margin: 0 4px !important;
+  min-width: 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+// ADICIONEI: Força Material Icons a aparecer
+mat-icon {
+  font-family: 'Material Icons' !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+  word-wrap: normal !important;
+  direction: ltr !important;
+  font-feature-settings: 'liga' !important;
+  -webkit-font-feature-settings: 'liga' !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+// ADICIONEI: Especificamente para ícones nos botões de ação
+.mat-column-actions mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+// Paginador
+mat-paginator {
+  flex-shrink: 0; // Impede que o paginador encolha
+}
+
+// Mensagem para quando não há dados
+.no-data-message {
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.54);
+
+  p {
+    margin-top: 16px;
+    font-size: 1.1rem;
+  }
+}

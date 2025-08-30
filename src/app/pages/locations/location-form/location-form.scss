@@ -1,4 +1,3 @@
-// :host é o próprio elemento <app-user-list>
 :host {
   display: flex;
   flex-direction: column;
@@ -19,24 +18,28 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  flex-wrap: wrap; // Permite quebrar linha em telas pequenas
+  gap: 16px;
+
+  .list-title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .header-button {
+    margin-left: 16px;
+  }
 }
 
 .list-controls {
   flex-shrink: 0;
-  display: flex;
-  gap: 24px;
-  align-items: center;
   margin-bottom: 16px;
-  flex-wrap: wrap; // Permite que os filtros quebrem linha
 }
 
 .search-field {
   width: 40%;
   min-width: 250px;
-}
-
-.filter-field {
-  min-width: 200px;
 }
 
 .table-container {
@@ -69,38 +72,15 @@ table {
   width: 100%;
 }
 
+.mat-header-cell {
+  font-weight: 600;
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: right;
+}
+
 mat-paginator {
   flex-shrink: 0;
-}
-
-/* ========================================================== */
-/* SEU CÓDIGO EXISTENTE E CORRETO (SEM ABREVIAÇÕES) */
-/* ========================================================== */
-.status-chip {
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: white;
-  display: inline-block;
-
-  &.active {
-    background-color: #28a745; // Verde
-  }
-  &.pending {
-    background-color: #ffc107; // Amarelo
-    color: #333;
-  }
-  &.inactive {
-    background-color: #6c757d; // Cinza
-  }
-  &.rejected {
-    background-color: #dc3545; // Vermelho
-  }
-}
-
-.actions-cell {
-  button {
-    margin-right: 8px;
-  }
 }

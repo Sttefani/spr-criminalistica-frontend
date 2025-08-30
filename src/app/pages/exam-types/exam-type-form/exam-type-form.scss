@@ -1,0 +1,63 @@
+/* ==========================================================================
+   Padrão de Estilo para Páginas de Formulário
+   ========================================================================== */
+
+// Container principal da página do formulário
+.edit-container { // Usamos 'edit-container' como nome padrão para consistência
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+// Cabeçalho da página (botão de voltar e título)
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+// O card que envolve o formulário
+.form-card {
+  padding: 16px;
+}
+
+// O próprio formulário, organizado em grade
+.form {
+  display: grid;
+  // Duas colunas de tamanho igual por padrão
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+
+  // Em telas menores, quebra para uma única coluna
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Classe para campos que devem ocupar a largura total da grade
+.full-width {
+  grid-column: 1 / -1;
+}
+
+// A seção de ações do card (botões de Cancelar/Salvar)
+mat-card-actions {
+  padding: 16px;
+}
+
+// Estilo para a tela de carregamento (spinner)
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}

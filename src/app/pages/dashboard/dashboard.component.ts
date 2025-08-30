@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit {
   // 3. ADICIONE A PROPRIEDADE PARA CONTROLAR O ACESSO
   // ==========================================================
   canAccessAdminModules = false;
+  canAccessEditingModules = false; // ADICIONE ESTA LINHA
 
   constructor(private authService: AuthService) {}
 
@@ -30,7 +31,7 @@ export class DashboardComponent implements OnInit {
     this.userRole = this.authService.getUserRole();
 
     // Define a permissão com base nos perfis administrativos
-    const adminRoles = ['super_admin', 'servidor_administrativo'];
+    const adminRoles = ['super_admin', 'servidor_administrativo', 'perito_oficial'];
     if (this.userRole && adminRoles.includes(this.userRole)) {
       this.canAccessAdminModules = true;
     }

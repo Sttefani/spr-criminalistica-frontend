@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 // Serviços e Componentes
 import { UserService } from '../../../services/user.service';
@@ -24,9 +25,10 @@ import { ApproveUserComponent } from '../../../components/dialogs/approve-user/a
   selector: 'app-user-list',
   standalone: true,
   imports: [
-    CommonModule, RouterModule, ReactiveFormsModule,
-    MatTableModule, MatPaginatorModule, MatProgressSpinnerModule, MatFormFieldModule,
-    MatInputModule, MatSelectModule, MatSnackBarModule, MatDialogModule, MatIconModule
+    CommonModule, RouterModule, ReactiveFormsModule, MatTableModule,
+    MatPaginatorModule, MatProgressSpinnerModule, MatFormFieldModule,
+    MatInputModule, MatSelectModule, MatSnackBarModule, MatDialogModule,
+    MatIconModule, MatSlideToggleModule
   ],
   templateUrl: './user-list.html',
   styleUrls: ['./user-list.scss']
@@ -41,6 +43,10 @@ export class UserListComponent implements OnInit, AfterViewInit {
   // Controles de formulário para os filtros
   searchControl = new FormControl('');
   statusControl = new FormControl('all');
+  authorityToggleControl = new FormControl(false); // Propriedade adicionada
+
+  // Armazena a lista vinda da API para filtragem local
+  private apiUsersResult: any[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -53,33 +59,45 @@ export class UserListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    // Escuta por mudanças na paginação ou nos filtros
-    merge(this.paginator.page, this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()), this.statusControl.valueChanges)
+    // Escuta mudanças na paginação OU nos filtros de API (busca e status)
+    merge(this.paginator.page, this.searchControl.valueChanges.pipe(debounceTime(400)), this.statusControl.valueChanges)
       .pipe(
         startWith({}),
-        // switchMap cancela a requisição anterior se uma nova chegar
         switchMap(() => {
           this.isLoadingResults = true;
           const page = this.paginator.pageIndex + 1;
           const limit = this.paginator.pageSize;
           const search = this.searchControl.value || '';
           const status = this.statusControl.value || 'all';
-          // Chama o serviço com os parâmetros atuais
           return this.userService.getUsers(page, limit, status, search).pipe(
-            // Em caso de erro, retorna um resultado vazio para não quebrar a aplicação
             catchError(() => of({ data: [], total: 0 }))
           );
         })
       ).subscribe(response => {
         this.isLoadingResults = false;
         this.totalData = response.total;
-        this.dataSource.data = response.data;
+        this.apiUsersResult = response.data; // Armazena o resultado da API
+        this.applyFrontendFilters(); // Aplica o filtro de autoridade localmente
       });
+
+    // Escuta APENAS o toggle de autoridade para aplicar o filtro local
+    this.authorityToggleControl.valueChanges.subscribe(() => {
+      this.applyFrontendFilters();
+    });
   }
 
-  // Método para forçar a recarga dos dados
+  // Aplica o filtro de autoridade na lista que já foi carregada
+  private applyFrontendFilters(): void {
+    if (this.authorityToggleControl.value) {
+      this.dataSource.data = this.apiUsersResult.filter(user => user.authority !== null && user.authority !== undefined);
+    } else {
+      this.dataSource.data = this.apiUsersResult;
+    }
+  }
+
+  // Recarrega os dados da API
   reloadData(): void {
-    // A forma mais simples de disparar o `merge` é emitir um evento no paginator
+    // Dispara o evento que o `merge` está escutando para recarregar da API
     this.paginator.page.emit();
   }
 
@@ -88,7 +106,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     return role.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
   }
 
-  // Métodos de ação que chamam a API e recarregam os dados
   approveUser(user: any): void {
     const dialogRef = this.dialog.open(ApproveUserComponent, { width: '400px', data: { userName: user.name } });
     dialogRef.afterClosed().subscribe(selectedRole => {
