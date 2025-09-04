@@ -83,32 +83,45 @@
             </span>
           </td>
         </ng-container>
-
-        <!-- Coluna Ações -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef> Ações </th>
+        <!-- Coluna Serviços Forenses -->
+        <ng-container matColumnDef="forensicServices">
+          <th mat-header-cell *matHeaderCellDef> Serviços Forenses </th>
           <td mat-cell *matCellDef="let user">
-            <ng-container *ngIf="user.status === 'pending'">
-              <button mat-icon-button color="primary" title="Aprovar Usuário" (click)="approveUser(user)">
-                <mat-icon>check_circle</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" title="Rejeitar Usuário" (click)="rejectUser(user)">
-                <mat-icon>cancel</mat-icon>
-              </button>
-            </ng-container>
-            <ng-container *ngIf="user.status === 'active' || user.status === 'inactive'">
-              <button *ngIf="user.status === 'active'" mat-icon-button color="warn" title="Inativar Usuário" (click)="toggleUserStatus(user, 'inactive')">
-                <mat-icon>toggle_off</mat-icon>
-              </button>
-              <button *ngIf="user.status === 'inactive'" mat-icon-button color="primary" title="Ativar Usuário" (click)="toggleUserStatus(user, 'active')">
-                <mat-icon>toggle_on</mat-icon>
-              </button>
-              <button mat-icon-button color="primary" title="Editar Usuário" [routerLink]="['/users/edit', user.id]">
-                <mat-icon>edit</mat-icon>
-              </button>
-            </ng-container>
+            <span class="services-text">{{ formatForensicServices(user.forensicServices) }}</span>
           </td>
         </ng-container>
+        <!-- Coluna Ações -->
+       <!-- Coluna Ações -->
+<ng-container matColumnDef="actions">
+  <th mat-header-cell *matHeaderCellDef> Ações </th>
+  <td mat-cell *matCellDef="let user">
+    <ng-container *ngIf="user.status === 'pending'">
+      <button mat-icon-button color="primary" title="Aprovar Usuário" (click)="approveUser(user)">
+        <mat-icon>check_circle</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" title="Rejeitar Usuário" (click)="rejectUser(user)">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </ng-container>
+    <ng-container *ngIf="user.status === 'active' || user.status === 'inactive'">
+      <button *ngIf="user.status === 'active'" mat-icon-button color="warn" title="Inativar Usuário" (click)="toggleUserStatus(user, 'inactive')">
+        <mat-icon>toggle_off</mat-icon>
+      </button>
+      <button *ngIf="user.status === 'inactive'" mat-icon-button color="primary" title="Ativar Usuário" (click)="toggleUserStatus(user, 'active')">
+        <mat-icon>toggle_on</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" title="Editar Usuário" [routerLink]="['/users/edit', user.id]">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <!-- NOVO: Botão para gerenciar serviços forenses -->
+      <button *ngIf="user.role === 'perito_oficial' || user.role === 'servidor_administrativo'"
+              mat-icon-button color="accent" title="Gerenciar Serviços Forenses"
+              (click)="manageUserServices(user)">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </ng-container>
+  </td>
+</ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

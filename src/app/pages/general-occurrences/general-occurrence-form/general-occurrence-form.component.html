@@ -1,0 +1,202 @@
+<div class="edit-container">
+  <!-- Header -->
+  <div class="header">
+    <!-- ✅ BOTÃO ALTERADO DE ÍCONE PARA BOTÃO DE TEXTO -->
+    <button mat-flat-button routerLink="/general-occurrences" class="back-button" aria-label="Voltar para a lista de ocorrências">
+      Voltar
+    </button>
+    <div class="header-content">
+      <h1>{{ pageTitle }}</h1>
+    </div>
+  </div>
+
+  <!-- Card do formulário -->
+  @if (!isLoading) {
+    <mat-card class="form-card">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-card-content>
+          <!-- Usando o novo layout de grid de 3 colunas -->
+          <div class="form-grid">
+
+            <h2 class="section-title">Dados Gerais</h2>
+
+            <!-- Data da Ocorrência -->
+            <mat-form-field appearance="outline">
+              <mat-label>Data do Registro da Ocorrência *</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="occurrenceDate" required>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              @if (form.get('occurrenceDate')?.hasError('required') && form.get('occurrenceDate')?.touched) {
+                <mat-error>Data é obrigatória</mat-error>
+              }
+            </mat-form-field>
+
+             <!-- Hora da Ocorrência -->
+            <mat-form-field appearance="outline">
+              <mat-label>Hora do Registro da Ocorrência *</mat-label>
+              <input matInput type="time" formControlName="occurrenceTime" required>
+              <mat-icon matSuffix>schedule</mat-icon>
+              @if (form.get('occurrenceTime')?.hasError('required') && form.get('occurrenceTime')?.touched) {
+                <mat-error>Hora é obrigatória</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Classificação da Ocorrência *</mat-label>
+              <mat-select formControlName="occurrenceClassificationId" required>
+                @for (item of occurrenceClassifications; track item.id) {
+                  <mat-option [value]="item.id">{{ item.name }} ({{ item.code }})</mat-option>
+                }
+              </mat-select>
+              @if (form.get('occurrenceClassificationId')?.hasError('required') && form.get('occurrenceClassificationId')?.touched) {
+                <mat-error>Classificação é obrigatória</mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Cidade -->
+            <mat-form-field appearance="outline">
+              <mat-label>Cidade *</mat-label>
+              <mat-select formControlName="cityId" required>
+                @for (city of cities; track city.id) {
+                  <mat-option [value]="city.id">{{ city.name }} - {{ city.state }}</mat-option>
+                }
+              </mat-select>
+              @if (form.get('cityId')?.hasError('required') && form.get('cityId')?.touched) {
+                <mat-error>Cidade é obrigatória</mat-error>
+              }
+            </mat-form-field>
+            <!-- Procedimento -->
+            <mat-form-field appearance="outline">
+              <mat-label>Procedimento</mat-label>
+              <mat-select formControlName="procedureId">
+                <mat-option [value]="null">Nenhum</mat-option>
+                @for (proc of procedures; track proc.id) {
+                  <mat-option [value]="proc.id">{{ proc.name }} ({{ proc.acronym }})</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Nº do Procedimento -->
+            <mat-form-field appearance="outline">
+              <mat-label>Nº do Procedimento</mat-label>
+              <input matInput formControlName="procedureNumber" placeholder="Ex: 123.456.789-0">
+            </mat-form-field>
+
+            <!-- Histórico -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Histórico da Ocorrência *</mat-label>
+              <textarea matInput formControlName="history" rows="5" required></textarea>
+              @if (form.get('history')?.hasError('required') && form.get('history')?.touched) {
+                <mat-error>Histórico é obrigatório</mat-error>
+              }
+            </mat-form-field>
+
+            <h2 class="section-title">Partes Envolvidas e Atribuição</h2>
+
+            <!-- Unidade Demandante -->
+            <mat-form-field appearance="outline">
+              <mat-label>Unidade Demandante</mat-label>
+              <mat-select formControlName="requestingUnitId">
+                <mat-option [value]="null">Nenhuma</mat-option>
+                @for (unit of requestingUnits; track unit.id) {
+                  <mat-option [value]="unit.id">{{ unit.name }} ({{ unit.acronym }})</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Autoridade Requisitante -->
+            <mat-form-field appearance="outline">
+              <mat-label>Autoridade Requisitante</mat-label>
+              <mat-select formControlName="requestingAuthorityId">
+                <mat-option [value]="null">Nenhuma</mat-option>
+                @for (auth of authorities; track auth.id) {
+                  <mat-option [value]="auth.id">{{ auth.name }} - ({{ auth.title }})</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Serviço Pericial -->
+            <mat-form-field appearance="outline">
+              <mat-label>Serviço Pericial*</mat-label>
+              <mat-select formControlName="forensicServiceId" required>
+                @for (service of forensicServices; track service.id) {
+                  <mat-option [value]="service.id">{{ service.name }}</mat-option>
+                }
+              </mat-select>
+              @if (form.get('forensicServiceId')?.hasError('required') && form.get('forensicServiceId')?.touched) {
+                <mat-error>Serviço é obrigatório</mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Perito Responsável -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Perito Responsável</mat-label>
+              <mat-select formControlName="responsibleExpertId">
+                <mat-option [value]="null">Não Atribuído</mat-option>
+                @for (expert of experts; track expert.id) {
+                  <mat-option [value]="expert.id">{{ expert.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Seção de Campos Adicionais -->
+            <div class="additional-fields-container">
+              <div class="additional-fields-header">
+                <h3>Campos Adicionais</h3>
+                <button mat-stroked-button color="primary" type="button" (click)="addAdditionalField()" [disabled]="isSaving">
+                  <mat-icon>add</mat-icon>
+                  Adicionar Campo
+                </button>
+              </div>
+              <div formArrayName="additionalFields">
+                @for (field of additionalFields.controls; track $index) {
+                  <div [formGroupName]="$index" class="additional-field-row">
+                    <mat-form-field appearance="outline" class="key-field">
+                      <mat-label>Chave {{$index + 1}}</mat-label>
+                      <input matInput formControlName="key">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="value-field">
+                      <mat-label>Valor {{$index + 1}}</mat-label>
+                      <input matInput formControlName="value">
+                    </mat-form-field>
+                    <button mat-icon-button color="warn" type="button" (click)="removeAdditionalField($index)"
+                            title="Remover Campo" class="remove-field-button" [disabled]="isSaving">
+                      <mat-icon>delete_forever</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <!-- Ações do formulário -->
+        <mat-card-actions align="end" class="form-actions">
+          <button mat-button routerLink="/general-occurrences" type="button" [disabled]="isSaving">
+            <mat-icon>close</mat-icon>
+            Cancelar
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isSaving">
+            @if (isSaving) {
+              <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
+              <span>Salvando...</span>
+            } @else {
+              <ng-container>
+                <mat-icon>save</mat-icon>
+                <span>{{ isEditMode ? 'Atualizar' : 'Salvar' }} Ocorrência</span>
+              </ng-container>
+            }
+          </button>
+        </mat-card-actions>
+      </form>
+    </mat-card>
+  }
+
+  <!-- Tela de Carregamento -->
+  @if (isLoading) {
+    <div class="loading">
+      <mat-spinner></mat-spinner>
+      <p>Carregando dados da ocorrência...</p>
+    </div>
+  }
+</div>

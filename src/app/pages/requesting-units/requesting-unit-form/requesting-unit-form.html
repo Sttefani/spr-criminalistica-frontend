@@ -1,0 +1,64 @@
+<div class="edit-container">
+  <!-- Header com botão voltar e título -->
+  <div class="header">
+    <button mat-icon-button routerLink="/requesting-units" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1>{{ pageTitle }}</h1>
+    </div>
+  </div>
+
+  <!-- Card do formulário -->
+  @if (!isLoading) {
+    <mat-card class="form-card">
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+
+          <!-- Nome da Unidade -->
+          <mat-form-field appearance="outline">
+            <mat-label>Nome da Unidade Demandante</mat-label>
+            <input matInput formControlName="name" placeholder="Ex: Delegacia Geral de Homicídios" required>
+            <mat-icon matPrefix>business</mat-icon>
+            @if (form.get('name')?.hasError('required')) {
+              <mat-error>O nome é obrigatório</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Sigla -->
+          <mat-form-field appearance="outline">
+            <mat-label>Sigla</mat-label>
+            <input matInput formControlName="acronym" placeholder="Ex: DGH" required>
+            <mat-icon matPrefix>short_text</mat-icon>
+            @if (form.get('acronym')?.hasError('required')) {
+              <mat-error>A sigla é obrigatória</mat-error>
+            }
+          </mat-form-field>
+
+        </form>
+      </mat-card-content>
+
+      <!-- Ações do formulário -->
+      <mat-card-actions align="end">
+        <button mat-button routerLink="/requesting-units">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+        <button mat-raised-button color="primary"
+                (click)="onSubmit()"
+                [disabled]="form.invalid">
+          <mat-icon>save</mat-icon>
+          Salvar
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  <!-- Tela de Carregamento -->
+  @if (isLoading) {
+    <div class="loading">
+      <mat-spinner></mat-spinner>
+      <p>Carregando dados da unidade...</p>
+    </div>
+  }
+</div>

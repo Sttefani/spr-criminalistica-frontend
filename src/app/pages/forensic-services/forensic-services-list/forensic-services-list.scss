@@ -1,0 +1,119 @@
+/* ==========================================================================
+   Padrão de Estilo para Páginas de Listagem
+   ========================================================================== */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.list-header {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .list-title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 16px;
+  }
+}
+
+.list-controls {
+  flex-shrink: 0;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.search-field {
+  width: 40%;
+  min-width: 250px;
+}
+
+.table-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto; // Garante rolagem horizontal se a tabela for muito larga
+}
+
+table { // Corrigido de '.table' para 'table'
+  width: 100%;
+}
+
+.mat-header-cell {
+  font-weight: 600;
+}
+
+// ==========================================================
+// A CORREÇÃO FINAL PARA A COLUNA DE AÇÕES
+// ==========================================================
+.mat-column-actions {
+  // 1. Dê à coluna uma largura fixa para garantir espaço
+  width: 150px;
+  flex-shrink: 0; // Impede que a coluna encolha
+}
+
+// 2. Estilize o conteúdo da célula de dados para centralizar os botões
+td.mat-cell.mat-column-actions {
+  display: flex;
+  justify-content: center; // Centraliza os botões horizontalmente
+  align-items: center;
+  gap: 8px; // Adiciona um pequeno espaço entre os botões
+}
+
+// 3. Centralize o texto do cabeçalho também
+th.mat-header-cell.mat-column-actions {
+  text-align: center;
+}
+
+
+mat-paginator {
+  flex-shrink: 0;
+}
+
+.no-data-message {
+  padding: 48px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.54);
+}

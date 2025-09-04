@@ -35,8 +35,7 @@ import { ApproveUserComponent } from '../../../components/dialogs/approve-user/a
 })
 export class UserListComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<any>();
-  displayedColumns: string[] = ['name', 'email', 'cpf', 'institution', 'role', 'status', 'actions'];
-
+  displayedColumns: string[] = ['name', 'email', 'cpf', 'institution', 'role', 'status', 'forensicServices', 'actions'];
   totalData = 0;
   isLoadingResults = true;
 
@@ -131,4 +130,19 @@ export class UserListComponent implements OnInit, AfterViewInit {
       this.reloadData();
     });
   }
+  manageUserServices(user: any): void {
+  // TODO: Implementar dialog de gerenciamento
+  console.log('Gerenciar serviços para:', user.name);
+  this.snackBar.open(`Funcionalidade em desenvolvimento para ${user.name}`, 'Fechar', { duration: 3000 });
+}
+
+/**
+ * Formata lista de serviços forenses para exibição
+ */
+formatForensicServices(services: any[]): string {
+  if (!services || services.length === 0) {
+    return 'Nenhum serviço';
+  }
+  return services.map(service => service.acronym || service.name).join(', ');
+}
 }

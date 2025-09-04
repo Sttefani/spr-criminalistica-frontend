@@ -1,0 +1,233 @@
+/* ==========================================================================
+   SCSS PARA LISTA/TABELA - general-occurrence-list.component.scss
+   ========================================================================== */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.list-header {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .list-title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 16px;
+  }
+}
+
+.list-controls {
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+
+.search-field {
+  width: 40%;
+  min-width: 250px;
+}
+
+.table-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-header-cell {
+  font-weight: 600;
+}
+
+.no-data-message {
+  padding: 48px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+// ==========================================================
+// ⚡ SOLUÇÕES PARA COLUNAS
+// ==========================================================
+
+::ng-deep {
+
+  // Coluna de procedimento - maior largura
+  .mat-column-procedure {
+    width: 220px !important;
+    min-width: 220px !important;
+    max-width: 220px !important;
+  }
+
+  // Coluna de ações
+  .mat-column-actions {
+    width: 250px !important;
+    max-width: 250px !important;
+    min-width: 250px !important;
+  }
+
+  .mat-table {
+    table-layout: fixed !important;
+  }
+
+  // Ações - botões lado a lado
+  td.mat-cell.mat-column-actions,
+  .mat-table .mat-row .mat-column-actions,
+  table.mat-table tbody tr td.mat-column-actions,
+  .mat-table tbody .mat-row .mat-column-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+    padding: 6px 4px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+
+    button,
+    .mat-icon-button {
+      flex-shrink: 0 !important;
+      width: 30px !important;
+      height: 30px !important;
+      min-width: 30px !important;
+      min-height: 30px !important;
+      margin: 0 1px !important;
+      padding: 0 !important;
+      display: inline-flex !important;
+
+      mat-icon,
+      .mat-icon {
+        font-size: 16px !important;
+        width: 16px !important;
+        height: 16px !important;
+        line-height: 16px !important;
+      }
+    }
+  }
+
+  th.mat-header-cell.mat-column-actions {
+    text-align: center !important;
+  }
+}
+
+// ==========================================================
+// ⚡ PROCEDIMENTO E NÚMERO - LADO A LADO COM TRACINHO
+// ==========================================================
+
+.multi-line-cell {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  line-height: 1.2 !important;
+  padding: 8px 0 !important;
+  flex-wrap: nowrap !important;
+
+  .primary-text {
+    flex-shrink: 0 !important;
+    font-weight: 500 !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    font-size: 0.8rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 120px !important;
+  }
+
+  .separator {
+    flex-shrink: 0 !important;
+    color: rgba(0, 0, 0, 0.5) !important;
+    font-size: 0.8rem !important;
+
+    &::before {
+      content: "-" !important;
+    }
+  }
+
+  .secondary-text {
+    flex-shrink: 0 !important;
+    font-size: 0.75rem !important;
+    color: rgba(0, 0, 0, 0.6) !important;
+    font-weight: 400 !important;
+    white-space: nowrap !important;
+  }
+}
+
+// ==========================================================
+// STATUS CHIPS
+// ==========================================================
+.status-chip {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  display: inline-block;
+  text-transform: capitalize;
+  white-space: nowrap;
+
+  &.aguardando_perito {
+    background-color: #ffc107;
+    color: #333;
+  }
+  &.em_andamento {
+    background-color: #17a2b8;
+  }
+  &.concluida {
+    background-color: #28a745;
+  }
+  &.arquivada {
+    background-color: #6c757d;
+  }
+  &.cancelada {
+    background-color: #dc3545;
+  }
+}
+
+mat-paginator {
+  flex-shrink: 0;
+}

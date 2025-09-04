@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Estilos para o Formulário de Ocorrência
+   ========================================================================== */
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.edit-container {
+  padding: 8px;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+}
+
+/* Cabeçalho com título e botão de voltar */
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+
+  .back-button {
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.form-card {
+  flex-grow: 2;
+  overflow-y: auto; /* Permite scroll se o conteúdo for maior que a tela */
+}
+
+
+/* Grelha principal para os campos do formulário */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 5px; /* ✅ ESPAÇAMENTO REDUZIDO */
+}
+
+/* Título de cada secção do formulário */
+.section-title {
+  grid-column: 1 / -1; /* Ocupa a largura total da grelha */
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-top: 10px; /* ✅ MARGEM SUPERIOR REDUZIDA */
+  margin-bottom: 8px;
+  border-bottom: 2px solid #3f51b5; /* ✅ BORDA AZUL ADICIONADA */
+  padding-bottom: 8px;
+}
+
+/* Classe para campos que devem ocupar a largura total */
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Container para os campos dinâmicos */
+.additional-fields-container {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+}
+
+.additional-fields-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+}
+
+/* Linha de um campo adicional (chave, valor, botão) */
+.additional-field-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 8px; /* ✅ ESPAÇAMENTO REDUZIDO */
+
+  .key-field, .value-field {
+    flex: 1;
+  }
+
+  .remove-field-button {
+    margin-top: 8px; /* Alinha o botão com os campos */
+  }
+}
+
+/* Ações do formulário (botões de salvar e cancelar) */
+.form-actions {
+  padding: 8px 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Spinner de carregamento para o botão de salvar */
+.button-spinner {
+  margin-right: 8px;
+}
+
+/* Ecrã de carregamento centralizado */
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  gap: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}
+

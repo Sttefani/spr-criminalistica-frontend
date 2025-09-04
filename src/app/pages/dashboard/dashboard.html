@@ -3,8 +3,11 @@
 
   <div class="modules-grid">
 
-    <!-- Card de Ocorrências (Sempre visível e ativo) -->
-    <mat-card class="module-card" [routerLink]="['/occurrences']">
+<!-- ========================================================== -->
+    <!-- CARD ADICIONADO: Ocorrências -->
+    <!-- É o módulo principal, visível e ativo para todos. -->
+    <!-- ========================================================== -->
+   <mat-card class="module-card" [routerLink]="['/general-occurrences']">
       <mat-card-header>
         <div class="module-icon-container" style="background-color: #3f51b5;">
           <mat-icon class="module-icon">assignment</mat-icon>
@@ -15,6 +18,7 @@
         <p>Gerencie e consulte ocorrências e laudos periciais.</p>
       </mat-card-content>
     </mat-card>
+
 
     <!-- Card de Autoridades -->
     <mat-card class="module-card"
@@ -71,9 +75,6 @@
     }
   </mat-card-content>
 </mat-card>
-
-
-
     <!-- Card de Procedimentos -->
     <mat-card class="module-card"
               [class.disabled]="!canAccessAdminModules"
@@ -96,7 +97,7 @@
     <!-- Card de Locais/Serviços -->
     <mat-card class="module-card"
               [class.disabled]="!canAccessAdminModules"
-              [routerLink]="canAccessAdminModules ? ['/locations'] : null">
+              [routerLink]="canAccessAdminModules ? ['/forensic-services'] : null">
       <mat-card-header>
         <div class="module-icon-container" style="background-color: #673ab7;">
           <mat-icon class="module-icon">business</mat-icon>
@@ -127,6 +128,23 @@
       <mat-card-content>
         @if (canAccessAdminModules) {
           <p>Gerencie os tipos e grupos de classificações de ocorrência.</p>
+        } @else {
+          <p class="disabled-text">Acesso restrito a Administradores.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="module-card"
+              [class.disabled]="!canAccessAdminModules"
+              [routerLink]="canAccessAdminModules ? ['/requesting-units'] : null">
+      <mat-card-header>
+        <div class="module-icon-container" style="background-color: #795548;">
+          <mat-icon class="module-icon">request_quote</mat-icon>
+        </div>
+        <mat-card-title>Unidades Demandantes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (canAccessAdminModules) {
+          <p>Gerencie as delegacias e outras unidades que solicitam perícias.</p>
         } @else {
           <p class="disabled-text">Acesso restrito a Administradores.</p>
         }

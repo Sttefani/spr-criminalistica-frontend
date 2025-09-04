@@ -1,0 +1,76 @@
+<div class="edit-container">
+  <!-- Header -->
+  <div class="header">
+    <!-- ========================================================== -->
+    <!-- AGRUPAMOS OS BOTÕES EM UMA DIV -->
+    <!-- ========================================================== -->
+    <div class="header-actions">
+      <button mat-icon-button routerLink="/forensic-services" class="back-button" aria-label="Voltar para a lista">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <button mat-stroked-button color="primary" routerLink="/dashboard" class="dashboard-button">
+        <mat-icon>dashboard</mat-icon>
+        Dashboard
+      </button>
+    </div>
+
+    <div class="header-content">
+      <h1>{{ pageTitle }}</h1>
+    </div>
+  </div>
+
+  <!-- Card do formulário -->
+  @if (!isLoading) {
+    <mat-card class="form-card">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-card-content>
+          <div class="form-grid">
+            <!-- Nome -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nome do Serviço *</mat-label>
+              <input matInput formControlName="name" placeholder="Ex: Genética Forense">
+              <mat-icon matPrefix>science</mat-icon>
+              @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
+                <mat-error>Nome é obrigatório</mat-error>
+              }
+            </mat-form-field>
+
+            <!-- Sigla -->
+            <mat-form-field appearance="outline">
+              <mat-label>Sigla *</mat-label>
+              <input matInput formControlName="acronym" placeholder="Ex: GEN" style="text-transform: uppercase">
+              <mat-icon matPrefix>short_text</mat-icon>
+              @if (form.get('acronym')?.hasError('required') && form.get('acronym')?.touched) {
+                <mat-error>Sigla é obrigatória</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+
+        <!-- Ações do formulário -->
+        <mat-card-actions align="end" class="form-actions">
+          <button mat-button routerLink="/forensic-services" type="button" [disabled]="isSaving">
+            <mat-icon>close</mat-icon>
+            Cancelar
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isSaving">
+            @if (isSaving) {
+              <mat-spinner diameter="20"></mat-spinner>
+              <span>Salvando...</span>
+            } @else {
+              <ng-container>
+                <mat-icon>save</mat-icon>
+                <span>{{ isEditMode ? 'Atualizar' : 'Salvar' }} Serviço</span>
+              </ng-container>
+            }
+          </button>
+        </mat-card-actions>
+      </form>
+    </mat-card>
+  }
+
+  <!-- Tela de carregamento -->
+  @if (isLoading) {
+    <!-- ... -->
+  }
+</div>

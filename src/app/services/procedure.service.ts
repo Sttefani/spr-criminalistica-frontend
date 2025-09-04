@@ -1,71 +1,69 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
-// ==========================================================
-// A CORREÇÃO PRINCIPAL É AQUI: A interface agora corresponde ao backend
-// ==========================================================
+// Interface para dar tipo aos dados de Procedimento
 export interface Procedure {
   id?: string;
   name: string;
-  acronym: string; // Adicionado
-  // 'description' foi removido
-  createdAt?: Date;
-  updatedAt?: Date;
+  acronym: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProcedureService {
-  private readonly apiUrl = 'http://localhost:3000/procedures';
+  private apiUrl = 'http://localhost:3000/procedures';
 
   constructor(private http: HttpClient) {}
 
-  private getAuthHeaders(): HttpHeaders | null {
+  /**
+   * Monta o cabeçalho de autorização lendo o token do localStorage.
+   */
+  private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token');
-    if (!token) {
-      console.error('[ProcedureService] Token de autenticação não encontrado.');
-      return null;
-    }
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
   }
 
-  // Lista todos os procedimentos
+  /**
+   * Busca a lista de todos os procedimentos (sem paginação).
+   */
   getProcedures(): Observable<Procedure[]> {
     const headers = this.getAuthHeaders();
-    if (!headers) return throwError(() => new Error('Não autenticado'));
     return this.http.get<Procedure[]>(this.apiUrl, { headers });
   }
 
-  // Obtém um procedimento específico por ID
+  /**
+   * Busca um único procedimento pelo ID.
+   */
   getProcedure(id: string): Observable<Procedure> {
     const headers = this.getAuthHeaders();
-    if (!headers) return throwError(() => new Error('Não autenticado'));
     return this.http.get<Procedure>(`${this.apiUrl}/${id}`, { headers });
   }
 
-  // Cria um novo procedimento
-  // O tipo do 'data' agora está correto, esperando 'name' e 'acronym'
+  /**
+   * Cria um novo procedimento.
+   */
   createProcedure(data: Pick<Procedure, 'name' | 'acronym'>): Observable<Procedure> {
     const headers = this.getAuthHeaders();
-    if (!headers) return throwError(() => new Error('Não autenticado'));
     return this.http.post<Procedure>(this.apiUrl, data, { headers });
   }
 
-  // Atualiza um procedimento existente
+  /**
+   * Atualiza um procedimento existente.
+   */
   updateProcedure(id: string, data: Partial<Procedure>): Observable<Procedure> {
     const headers = this.getAuthHeaders();
-    if (!headers) return throwError(() => new Error('Não autenticado'));
     return this.http.patch<Procedure>(`${this.apiUrl}/${id}`, data, { headers });
   }
 
-  // Exclui um procedimento
+  /**
+   * Deleta (soft delete) um procedimento.
+   */
   deleteProcedure(id: string): Observable<any> {
     const headers = this.getAuthHeaders();
-    if (!headers) return throwError(() => new Error('Não autenticado'));
     return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers });
   }
 }

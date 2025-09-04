@@ -1,0 +1,89 @@
+/* ==========================================================================
+   Padrão de Estilo para Páginas de Formulário
+   ========================================================================== */
+
+.edit-container {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+// Cabeçalho da página
+.header {
+  display: flex;
+  justify-content: space-between; // Joga os filhos para as extremidades
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px; // Espaço entre os grupos de botões e o título
+
+  // Container para os botões de ação do cabeçalho
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px; // Espaço entre o botão de voltar e o de dashboard
+    flex-shrink: 0; // Impede que os botões encolham
+  }
+
+  // Container para o título
+  .header-content {
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 500;
+      margin: 0;
+      color: #333;
+    }
+  }
+}
+
+// Card do formulário
+.form-card {
+  padding: 16px 24px;
+}
+
+// Grid do formulário
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+// Ações no rodapé do card
+.form-actions {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+
+  button {
+    margin-left: 8px;
+  }
+
+  .button-spinner {
+    margin-right: 8px;
+  }
+}
+
+// Tela de carregamento
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  gap: 16px;
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column-reverse; // Título vai para cima dos botões
+    align-items: flex-start;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

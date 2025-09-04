@@ -18,15 +18,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .list-controls {
   flex-shrink: 0;
   display: flex;
-  gap: 24px;
+  gap: 14px;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   flex-wrap: wrap; // Permite que os filtros quebrem linha
 }
 

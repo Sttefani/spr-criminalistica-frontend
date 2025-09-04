@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface OccurrenceClassification {
+  data: any[];
   id?: string;
   code: string;
   name: string;
@@ -22,9 +23,6 @@ export class OccurrenceClassificationService {
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 
-  /**
-   * Busca a lista de classificações com paginação, busca E FILTRO DE GRUPO.
-   */
   getClassifications(page: number, limit: number, search: string, group: string): Observable<any> {
     const headers = this.getAuthHeaders();
     let params = new HttpParams()
@@ -34,28 +32,18 @@ export class OccurrenceClassificationService {
     if (search) {
       params = params.append('search', search);
     }
-    // ==========================================================
-    // LÓGICA ADICIONADA PARA O FILTRO DE GRUPO
-    // ==========================================================
     if (group && group !== 'all') {
       params = params.append('group', group);
     }
-
     return this.http.get<any>(this.apiUrl, { headers, params });
   }
 
-  // ==========================================================
-  // NOVO MÉTODO PARA BUSCAR A LISTA DE GRUPOS
-  // ==========================================================
-  /**
-   * Busca a lista de todos os grupos distintos.
-   * Chama o endpoint GET /occurrence-classifications/groups/all
-   */
   getAllGroups(): Observable<string[]> {
     const headers = this.getAuthHeaders();
     return this.http.get<string[]>(`${this.apiUrl}/groups/all`, { headers });
   }
 
+  // MÉTODO CORRIGIDO AQUI
   getClassification(id: string): Observable<OccurrenceClassification> {
     const headers = this.getAuthHeaders();
     return this.http.get<OccurrenceClassification>(`${this.apiUrl}/${id}`, { headers });

@@ -23,7 +23,8 @@ export class UserService {
   /**
    * Busca a lista de usuários da API com paginação e filtros.
    */
-  getUsers(page: number, limit: number, status: string, search: string): Observable<any> {
+  // CORREÇÃO: Adicionado o parâmetro opcional 'role' para filtrar por função.
+  getUsers(page: number, limit: number, status: string, search: string, role?: string): Observable<any> {
     const headers = this.getAuthHeaders();
     let params = new HttpParams()
       .set('page', page.toString())
@@ -34,6 +35,10 @@ export class UserService {
     }
     if (search) {
       params = params.append('search', search);
+    }
+    // CORREÇÃO: Se uma função for fornecida, ela é adicionada como parâmetro na requisição.
+    if (role) {
+      params = params.append('role', role);
     }
 
     return this.http.get(this.apiUrl, { headers, params });
@@ -80,9 +85,46 @@ export class UserService {
     const body = { status };
     return this.http.patch(`${this.apiUrl}/${userId}`, body, { headers });
   }
+
+  /**
+   * Busca todos os usuários sem paginação.
+   */
   getAllUsers(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(this.apiUrl, { headers });
+  }
+  getPeritosOficiais(): Observable<any> {
   const headers = this.getAuthHeaders();
-  // Chama o endpoint sem parâmetros de paginação
-  return this.http.get(this.apiUrl, { headers });
+  const params = new HttpParams()
+    .set('role', 'perito_oficial')
+    .set('status', 'active')
+    .set('page', '1')
+    .set('limit', '1000');
+
+  return this.http.get(this.apiUrl, { headers, params });
+}
+/**
+ * Busca os serviços forenses vinculados a um usuário.
+ */
+getUserForensicServices(userId: string): Observable<any> {
+  const headers = this.getAuthHeaders();
+  return this.http.get(`${this.apiUrl}/${userId}/forensic-services`, { headers });
+}
+
+/**
+ * Vincula um usuário a múltiplos serviços forenses.
+ */
+linkUserToForensicServices(userId: string, forensicServiceIds: string[]): Observable<any> {
+  const headers = this.getAuthHeaders();
+  const body = { forensicServiceIds };
+  return this.http.post(`${this.apiUrl}/${userId}/forensic-services`, body, { headers });
+}
+
+/**
+ * Desvincula um usuário de um serviço forense específico.
+ */
+unlinkUserFromForensicService(userId: string, serviceId: string): Observable<any> {
+  const headers = this.getAuthHeaders();
+  return this.http.delete(`${this.apiUrl}/${userId}/forensic-services/${serviceId}`, { headers });
 }
 }

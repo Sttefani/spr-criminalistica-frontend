@@ -1,0 +1,126 @@
+<div class="list-container">
+  <!-- Cabeçalho -->
+  <header class="list-header">
+    <h1 class="list-title">Gerenciar Ocorrências</h1>
+    <div class="header-actions">
+      <button mat-stroked-button color="primary" routerLink="/dashboard" class="header-button">
+        <mat-icon>dashboard</mat-icon>
+        Voltar ao Dashboard
+      </button>
+      @if (canCreateOrEdit) {
+        <button mat-raised-button color="primary" routerLink="/general-occurrences/new" class="header-button">
+          <mat-icon>add</mat-icon>
+          Nova Ocorrência
+        </button>
+      }
+    </div>
+  </header>
+
+  <!-- Controles de Busca -->
+  <section class="list-controls">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar por Nº do Caso ou Procedimento</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Digite para buscar..." autocomplete="off">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </section>
+
+  <!-- Container da Tabela -->
+  <section class="table-container mat-elevation-z8">
+    @if (isLoadingResults) {
+      <div class="loading-shade">
+        <mat-spinner diameter="50"></mat-spinner>
+      </div>
+    }
+
+    <div class="table-scroll-container">
+      <table mat-table [dataSource]="dataSource" [trackBy]="trackById">
+
+        <!-- Coluna Nº do Caso -->
+        <ng-container matColumnDef="caseNumber">
+          <th mat-header-cell *matHeaderCellDef> Nº do Caso </th>
+          <td mat-cell *matCellDef="let item"> {{ item.caseNumber || 'Não Gerado' }} </td>
+        </ng-container>
+
+        <!-- Coluna Procedimento / Nº Procedimento -->
+       <ng-container matColumnDef="procedure">
+      <th mat-header-cell *matHeaderCellDef> Procedimento / Nº </th>
+      <td mat-cell *matCellDef="let item">
+        <div class="multi-line-cell">
+          <span class="primary-text">{{ item.procedure?.name || '-' }}</span>
+          <span class="secondary-text">{{ item.procedureNumber || 'Não informado' }}</span>
+        </div>
+      </td>
+      </ng-container>
+
+        <!-- Coluna Cidade -->
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef> Cidade </th>
+          <td mat-cell *matCellDef="let item"> {{ item.city?.name || '-' }} </td>
+        </ng-container>
+
+        <!-- Coluna Autoridade Requisitante -->
+        <ng-container matColumnDef="requestingAuthority">
+          <th mat-header-cell *matHeaderCellDef> Autoridade Requisitante </th>
+          <td mat-cell *matCellDef="let item" [matTooltip]="item.requestingAuthority?.title || ''">
+            {{ item.requestingAuthority?.name || '-' }}
+          </td>
+        </ng-container>
+
+        <!-- Coluna Perito Responsável -->
+        <ng-container matColumnDef="responsibleExpert">
+          <th mat-header-cell *matHeaderCellDef> Perito Responsável </th>
+          <td mat-cell *matCellDef="let item"> {{ item.responsibleExpert?.name || 'Não atribuído' }} </td>
+        </ng-container>
+
+        <!-- Coluna Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef> Status </th>
+          <td mat-cell *matCellDef="let item">
+            @if (item.status) {
+              <span class="status-chip" [ngClass]="item.status.toLowerCase()">
+                {{ item.status.replace('_', ' ') | titlecase }}
+              </span>
+            }
+          </td>
+        </ng-container>
+
+        <!-- ✅ COLUNA AÇÕES ATUALIZADA -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="mat-column-actions"> Ações </th>
+          <td mat-cell *matCellDef="let item" class="mat-column-actions">
+            <!-- BOTÃO DE VISUALIZAR -->
+            <button mat-icon-button color="accent" (click)="viewDetails(item)" title="Ver Detalhes">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            @if (canCreateOrEdit) {
+              <button mat-icon-button color="primary" [routerLink]="['/general-occurrences/edit', item.id]" title="Editar Ocorrência">
+                <mat-icon>edit</mat-icon>
+              </button>
+            }
+            @if (isSuperAdmin) {
+              <button mat-icon-button color="warn" (click)="deleteOccurrence(item.id, item.caseNumber)" title="Excluir Ocorrência">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <!-- Linhas da Tabela -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    @if (!isLoadingResults && dataSource.data.length === 0) {
+      <div class="no-data-message">
+        <p>Nenhuma ocorrência encontrada.</p>
+      </div>
+    }
+
+    <!-- Paginador -->
+    <mat-paginator [length]="totalData" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons>
+    </mat-paginator>
+  </section>
+</div>
+
