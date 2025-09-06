@@ -32,6 +32,7 @@ import { GeneralOccurrenceListComponent } from './pages/general-occurrences/gene
 import { GeneralOccurrenceFormComponent } from './pages/general-occurrences/general-occurrence-form/general-occurrence-form.component';
 import { ForensicServicesFormComponent } from './pages/forensic-services/forensic-services-form/forensic-services-form.component';
 import { ForensicServicesListComponent } from './pages/forensic-services/forensic-services-list/forensic-services-list.component';
+import { OccurrenceMovementsListComponent } from './pages/occurrence-movements/occurrence-movements-list/occurrence-movements-list.component';
 
 export const routes: Routes = [
   // Rotas Públicas
@@ -87,6 +88,13 @@ export const routes: Routes = [
       // Módulos APENAS para SUPER_ADMIN
       { path: 'users', component: UserListComponent, canActivate: [superAdminGuard] },
       { path: 'users/edit/:id', component: UserEditComponent, canActivate: [superAdminGuard] },
+       {
+        path: 'occurrence-movements',
+        component: OccurrenceMovementsListComponent,
+        canActivate: [editingAccessGuard]
+      },
+
+
     ]
   },
 

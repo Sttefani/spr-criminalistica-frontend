@@ -1,0 +1,113 @@
+<div class="dialog-header">
+  <h1 mat-dialog-title>Detalhes da Ocorrência: {{ data.caseNumber }}</h1>
+  <button mat-icon-button (click)="onClose()" matTooltip="Fechar">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <div class="content-container">
+
+    <!-- Seção Principal - 2 colunas -->
+    <div class="main-section">
+      <!-- Dados Gerais -->
+      <mat-card appearance="outlined" class="info-card">
+        <mat-card-header><mat-card-title>Dados Gerais</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <div class="field-row">
+            <span class="label">Data e Hora:</span>
+            <span class="value">{{ data.occurrenceDate | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="field-row">
+            <span class="label">Procedimento:</span>
+            <span class="value">{{ data.procedure?.name || '-' }} ({{ data.procedureNumber || 'N/A' }})</span>
+          </div>
+          <div class="field-row">
+            <span class="label">Classificação:</span>
+            <span class="value">{{ data.occurrenceClassification?.name || '-' }}</span>
+          </div>
+          <div class="field-row">
+            <span class="label">Cidade:</span>
+            <span class="value">{{ data.city?.name || '-' }} - {{ data.city?.state || '' }}</span>
+          </div>
+          <div class="field-row">
+            <span class="label">Status:</span>
+            <span class="value status-highlight">{{ data.status.replace('_', ' ') }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Envolvidos -->
+      <mat-card appearance="outlined" class="info-card">
+        <mat-card-header><mat-card-title>Envolvidos</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <div class="field-row">
+            <span class="label">Unidade Demandante:</span>
+            <span class="value">{{ data.requestingUnit?.name || '-' }}</span>
+          </div>
+          <div class="field-row">
+            <span class="label">Autoridade:</span>
+            <span class="value">{{ data.requestingAuthority?.name || '-' }}</span>
+          </div>
+          <div class="field-row">
+            <span class="label">Perito:</span>
+            <span class="value">{{ data.responsibleExpert?.name || 'Não Atribuído' }}</span>
+          </div>
+          <div class="field-row">
+            <span class="label">Serviço:</span>
+            <span class="value">{{ data.forensicService?.name || '-' }}</span>
+          </div>
+          <div class="field-row">
+            <span class="label">Registrado Por:</span>
+            <span class="value">{{ data.createdBy?.name || '-' }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Histórico - Largura total -->
+    <mat-card appearance="outlined" class="full-width-card">
+      <mat-card-header><mat-card-title>Histórico da Ocorrência</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <div class="history-container">
+          <p class="history-text">{{ data.history }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Campos Adicionais - Com scroll se necessário -->
+    @if (hasAdditionalFields()) {
+      <mat-card appearance="outlined" class="full-width-card">
+        <mat-card-header>
+          <mat-card-title>Campos Adicionais ({{ getAdditionalFields().length }} campos)</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="additional-fields-grid">
+            @for (field of getAdditionalFields(); track field.key) {
+              <div class="field-row">
+                <span class="label">{{ field.key }}:</span>
+                <span class="value">{{ field.value }}</span>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Metadados -->
+    <div class="metadata">
+      <span>Criado em: {{ data.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      <span>•</span>
+      <span>Última Atualização: {{ data.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+    </div>
+
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onClose()">Fechar</button>
+  <button mat-raised-button color="primary" (click)="generatePdf()">
+    <mat-icon>print</mat-icon>
+    Gerar PDF
+  </button>
+</mat-dialog-actions>

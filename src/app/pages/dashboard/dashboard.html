@@ -169,6 +169,26 @@
         }
       </mat-card-content>
     </mat-card>
-
+    <!-- ========================================================== -->
+<!-- CARD: Movimentações de Ocorrências -->
+<!-- Acesso: perito_oficial, servidor_administrativo, super_admin -->
+<!-- ========================================================== -->
+<mat-card class="module-card"
+          [class.disabled]="!canAccessMovements"
+          [routerLink]="canAccessMovements ? ['/occurrence-movements'] : null">
+  <mat-card-header>
+    <div class="module-icon-container" style="background-color: #607d8b;">
+      <mat-icon class="module-icon">timeline</mat-icon>
+    </div>
+    <mat-card-title>Movimentações</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    @if (canAccessMovements) {
+      <p>Registre e consulte o histórico de movimentações das ocorrências.</p>
+    } @else {
+      <p class="disabled-text">Acesso restrito a Peritos e Servidores.</p>
+    }
+  </mat-card-content>
+</mat-card>
   </div>
 </div>

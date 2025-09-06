@@ -68,7 +68,13 @@ export class GeneralOccurrenceService {
   /**
    * Busca a lista de ocorrências com paginação e busca.
    */
-  getOccurrences(page: number, limit: number, search?: string): Observable<any> {
+   getOccurrences(
+    page: number,
+    limit: number,
+    search?: string,
+    forensicServiceId?: string, // <-- ADICIONADO
+    onlyMine?: boolean // <-- ADICIONADO
+  ): Observable<any> {
     const headers = this.getAuthHeaders();
     let params = new HttpParams()
       .set('page', page.toString())
@@ -77,10 +83,16 @@ export class GeneralOccurrenceService {
     if (search) {
       params = params.append('search', search);
     }
+    // ✅ Adição dos novos filtros aos parâmetros da requisição
+    if (forensicServiceId && forensicServiceId !== 'all') {
+      params = params.append('forensicServiceId', forensicServiceId);
+    }
+    if (onlyMine) {
+      params = params.append('onlyMine', 'true');
+    }
 
     return this.http.get<any>(this.apiUrl, { headers, params });
   }
-
   /**
    * Busca uma única ocorrência pelo ID.
    */

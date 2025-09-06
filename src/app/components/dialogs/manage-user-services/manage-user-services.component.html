@@ -1,0 +1,115 @@
+<!-- Header do Dialog -->
+<div class="dialog-header">
+  <h2 mat-dialog-title>
+    <mat-icon>settings</mat-icon>
+    Gerenciar Serviços Forenses
+  </h2>
+  <p class="user-info">
+    <strong>Usuário:</strong> {{ user.name }} ({{ user.role?.replace('_', ' ') | titlecase }})
+  </p>
+</div>
+
+<!-- Conteúdo do Dialog -->
+<mat-dialog-content class="dialog-content">
+
+  <!-- Loading Inicial -->
+  @if (isLoadingServices) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Carregando serviços forenses...</p>
+    </div>
+  } @else {
+    <!-- Lista de Serviços -->
+    <div class="services-list">
+
+      <!-- Cabeçalho da Lista com Busca -->
+      <div class="services-header">
+        <h3>Serviços Disponíveis</h3>
+
+        <!-- Campo de Busca -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar serviços</mat-label>
+          <input matInput [formControl]="searchServicesControl" placeholder="Digite o nome ou sigla...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- Contador com resultados filtrados -->
+        @if (searchServicesControl.value) {
+          <p class="services-count">
+            {{ filteredServices.length }} de {{ services.length }} serviços
+            @if (filteredServices.length !== services.length) {
+              <span class="filter-indicator">(filtrados)</span>
+            }
+          </p>
+        } @else {
+          <p class="services-count">{{ services.length }} serviços encontrados</p>
+        }
+      </div>
+
+      @if (services.length === 0) {
+        <!-- Mensagem se não há serviços -->
+        <div class="no-services">
+          <mat-icon>info</mat-icon>
+          <p>Nenhum serviço forense disponível</p>
+        </div>
+      } @else if (filteredServices.length === 0) {
+        <!-- Mensagem quando busca não retorna resultados -->
+        <div class="no-services">
+          <mat-icon>search_off</mat-icon>
+          <p>Nenhum serviço encontrado com "{{ searchServicesControl.value }}"</p>
+          <button mat-button (click)="searchServicesControl.setValue('')" color="primary">
+            <mat-icon>clear</mat-icon>
+            Limpar busca
+          </button>
+        </div>
+      } @else {
+        <!-- Lista de Serviços Filtrados -->
+        @for (serviceState of filteredServices; track serviceState.service.id) {
+          <div class="service-item">
+
+            <!-- Info do Serviço -->
+            <div class="service-info">
+              <div class="service-name">{{ serviceState.service.name }}</div>
+              <div class="service-acronym">{{ serviceState.service.acronym }}</div>
+            </div>
+
+            <!-- Status e Toggle -->
+            <div class="service-controls">
+
+              <!-- Status Visual -->
+              <div class="status-indicator"
+                   [ngClass]="{ 'linked': serviceState.isLinked, 'unlinked': !serviceState.isLinked }">
+                @if (serviceState.isLinked) {
+                  <mat-icon>check_circle</mat-icon>
+                } @else {
+                  <mat-icon>radio_button_unchecked</mat-icon>
+                }
+              </div>
+
+              <!-- Loading Spinner Individual ou Toggle -->
+              @if (serviceState.isLoading) {
+                <mat-spinner diameter="24"></mat-spinner>
+              } @else {
+                <mat-slide-toggle
+                  [checked]="serviceState.isLinked"
+                  (change)="toggleService(serviceState)"
+                  color="primary">
+                </mat-slide-toggle>
+              }
+
+            </div>
+          </div>
+        }
+      }
+    </div>
+  }
+
+</mat-dialog-content>
+
+<!-- Ações do Dialog -->
+<mat-dialog-actions class="dialog-actions">
+  <button mat-button (click)="close()">
+    <mat-icon>close</mat-icon>
+    Fechar
+  </button>
+</mat-dialog-actions>

@@ -20,85 +20,8 @@ import autoTable from 'jspdf-autotable';
     CommonModule, DatePipe, MatDialogModule, MatButtonModule,
     MatIconModule, MatTooltipModule, MatDividerModule, MatCardModule
   ],
-  template: `
-    <div class="dialog-header">
-      <h1 mat-dialog-title>Detalhes da Ocorrência: {{ data.caseNumber }}</h1>
-      <button mat-icon-button (click)="onClose()" matTooltip="Fechar">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-    <mat-dialog-content class="mat-typography" id="printable-content">
-      <div class="details-grid">
-        <!-- Dados Gerais -->
-        <mat-card appearance="outlined">
-          <mat-card-header><mat-card-title>Dados Gerais</mat-card-title></mat-card-header>
-          <mat-card-content>
-            <p><strong>Data e Hora do Registro:</strong> {{ data.occurrenceDate | date:'dd/MM/yyyy HH:mm' }}</p>
-            <p><strong>Procedimento:</strong> {{ data.procedure?.name || '-' }} ({{ data.procedureNumber || 'N/A' }})</p>
-            <p><strong>Classificação:</strong> {{ data.occurrenceClassification?.name || '-' }}</p>
-            <p><strong>Cidade:</strong> {{ data.city?.name || '-' }} - {{ data.city?.state || '' }}</p>
-            <p><strong>Status:</strong> <span class="status-text">{{ data.status.replace('_', ' ') }}</span></p>
-          </mat-card-content>
-        </mat-card>
-
-        <!-- Envolvidos -->
-        <mat-card appearance="outlined">
-          <mat-card-header><mat-card-title>Envolvidos</mat-card-title></mat-card-header>
-          <mat-card-content>
-            <p><strong>Unidade Demandante:</strong> {{ data.requestingUnit?.name || '-' }}</p>
-            <p><strong>Autoridade Requisitante:</strong> {{ data.requestingAuthority?.name || '-' }}</p>
-            <p><strong>Perito Responsável:</strong> {{ data.responsibleExpert?.name || 'Não Atribuído' }}</p>
-            <p><strong>Serviço Pericial:</strong> {{ data.forensicService?.name || '-' }}</p>
-            <p><strong>Registrado Por:</strong> {{ data.createdBy?.name || '-' }}</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
-
-      <!-- Histórico -->
-      <mat-card appearance="outlined" class="full-width-card">
-        <mat-card-header><mat-card-title>Histórico da Ocorrência</mat-card-title></mat-card-header>
-        <mat-card-content>
-          <p class="history-text">{{ data.history }}</p>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Campos Adicionais -->
-      @if (hasAdditionalFields()) {
-        <mat-card appearance="outlined" class="full-width-card">
-          <mat-card-header><mat-card-title>Campos Adicionais</mat-card-title></mat-card-header>
-          <mat-card-content>
-            <ul>
-              @for (field of getAdditionalFields(); track field.key) {
-                <li><strong>{{ field.key }}:</strong> {{ field.value }}</li>
-              }
-            </ul>
-          </mat-card-content>
-        </mat-card>
-      }
-
-      <!-- Metadados -->
-      <div class="metadata">
-        <span>Criado em: {{ data.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
-        <span>Última Atualização: {{ data.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-      </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-stroked-button (click)="onClose()">Fechar</button>
-      <button mat-raised-button color="primary" (click)="generatePdf()">
-        <mat-icon>print</mat-icon>
-        Imprimir em PDF
-      </button>
-    </mat-dialog-actions>
-  `,
-  styles: [`
-    .dialog-header { display: flex; justify-content: space-between; align-items: center; }
-    .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 16px; }
-    .full-width-card { grid-column: 1 / -1; }
-    .history-text { white-space: pre-wrap; }
-    .metadata { font-size: 0.8em; color: grey; text-align: center; margin-top: 16px; }
-    .status-text { font-weight: bold; }
-    mat-card-content p, mat-card-content li { margin-bottom: 8px; }
-  `]
+  templateUrl: './occurrence-details-dialog.component.html',
+  styleUrls: ['./occurrence-details-dialog.component.scss']
 })
 export class OccurrenceDetailsDialogComponent {
   constructor(
@@ -152,13 +75,11 @@ export class OccurrenceDetailsDialogComponent {
     doc.setFontSize(12);
     doc.text('Histórico da Ocorrência', 14, lastTableY + 15);
 
-    // ✅ CORREÇÃO: Define um tamanho de fonte menor para a descrição do histórico.
     doc.setFontSize(10);
     doc.text(this.data.history, 14, lastTableY + 22, { maxWidth: 180 });
 
     if (this.hasAdditionalFields()) {
-        let additionalFieldsY = lastTableY + 22 + 20; // Posição inicial baseada no histórico
-        // Título da seção Campos Adicionais
+        let additionalFieldsY = lastTableY + 22 + 20;
         doc.setFontSize(12);
         doc.text('Campos Adicionais', 14, additionalFieldsY);
         autoTable(doc, {
@@ -172,4 +93,3 @@ export class OccurrenceDetailsDialogComponent {
     doc.save(`ocorrencia_${this.data.caseNumber}.pdf`);
   }
 }
-

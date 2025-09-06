@@ -1,0 +1,409 @@
+// Modal principal
+mat-dialog-content {
+  width: 1200px;
+  max-width: 90vw;
+  height: 80vh;
+  max-height: 900px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  background-color: #fafafa;
+}
+
+// Título
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  margin: 0;
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  border-radius: 8px 8px 0 0;
+  font-size: 16px;
+  white-space: nowrap;
+
+  mat-icon {
+    color: white;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .movements-count {
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 3px 6px;
+    border-radius: 10px;
+    font-weight: normal;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+}
+
+// Quando não há movimentações
+.no-movements {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  mat-icon {
+    font-size: 64px;
+    height: 64px;
+    width: 64px;
+    margin-bottom: 20px;
+    color: #ccc;
+  }
+
+  p {
+    font-size: 18px;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+// Container das movimentações
+.movements-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 100%;
+}
+
+// Cards das movimentações
+.movement-card {
+  background: white;
+  border-radius: 12px;
+  border-left: 6px solid #1976d2;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  &:nth-child(even) {
+    background-color: #f8f9fa;
+    border-left-color: #2196f3;
+  }
+
+  &:nth-child(odd) {
+    border-left-color: #1976d2;
+  }
+}
+
+// Header de cada movimentação
+.movement-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+  padding: 20px;
+}
+
+.movement-number {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.movement-info {
+  flex: 1;
+  min-width: 0; // Importante para text overflow
+
+  h4 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+// Metadados
+.movement-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #555;
+    background: rgba(25, 118, 210, 0.08);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+
+    mat-icon {
+      font-size: 18px;
+      height: 18px;
+      width: 18px;
+      color: #1976d2;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// Conteúdo dos cards
+mat-card-content {
+  padding: 0 20px 20px 20px;
+  max-width: 100%;
+}
+
+// Informações de prazo
+.deadline-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  word-wrap: break-word;
+
+  mat-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    color: #1976d2;
+    flex-shrink: 0;
+  }
+}
+
+// Informações de prorrogação
+.extension-info {
+  margin-top: 16px;
+
+  mat-chip {
+    margin-bottom: 12px;
+    font-weight: 600;
+
+    mat-icon {
+      margin-right: 4px;
+    }
+  }
+
+  .justification {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    border: 2px solid #ffb74d;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 12px 0 0 0;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.6;
+    color: #e65100;
+    font-weight: 500;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+// Chip de sistema
+.system-chip {
+  margin-top: 12px;
+  background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+  color: #2e7d32;
+  font-weight: 600;
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+// Botões do modal
+mat-dialog-actions {
+  padding: 20px 24px;
+  margin: 0;
+  gap: 16px;
+  background: #f5f5f5;
+  border-top: 1px solid #e0e0e0;
+
+  button {
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  button[mat-stroked-button] {
+    margin-right: auto;
+    border: 2px solid #ff9800;
+    color: #ff9800;
+
+    &:hover {
+      background: #ff9800;
+      color: white;
+    }
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+
+  button[mat-raised-button] {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+    color: white !important;
+
+    &:hover {
+      box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4);
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 1024px) {
+  mat-dialog-content {
+    width: 95vw;
+    max-width: 95vw;
+    height: 80vh;
+    padding: 20px;
+  }
+
+  .movement-header {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .movement-number {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .movement-info h4 {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  mat-dialog-content {
+    width: 98vw;
+    max-width: 98vw;
+    height: 85vh;
+    padding: 16px;
+  }
+
+  h2[mat-dialog-title] {
+    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 16px;
+
+    .movements-count {
+      margin-left: 0;
+      font-size: 11px;
+    }
+  }
+
+  .movements-timeline {
+    gap: 12px;
+  }
+
+  .movement-header {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .movement-number {
+    align-self: flex-start;
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .movement-meta {
+    flex-direction: column;
+    gap: 8px;
+
+    span {
+      font-size: 12px;
+      padding: 4px 8px;
+    }
+  }
+
+  .movement-info h4 {
+    font-size: 14px;
+  }
+
+  mat-dialog-actions {
+    padding: 16px;
+    flex-direction: column;
+
+    button {
+      width: 100%;
+      margin: 0;
+    }
+
+    button[mat-stroked-button] {
+      order: 2;
+      margin-top: 8px;
+    }
+  }
+}
+
+// Scrollbar customizada
+mat-dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+mat-dialog-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+mat-dialog-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+
+  &:hover {
+    background: #a8a8a8;
+  }
+}
+
+// Animação dos cards
+.movement-card {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

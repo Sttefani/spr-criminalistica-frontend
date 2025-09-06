@@ -1,0 +1,243 @@
+.movements-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.movements-header {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  .movements-title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 16px;
+  }
+}
+
+.table-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-header-cell {
+  font-weight: 600;
+}
+
+// FLAGS DE PRAZO
+.deadline-cell {
+  padding: 8px 16px !important;
+}
+
+.deadline-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.deadline-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  animation: pulse 2s infinite;
+}
+
+.deadline-text {
+  font-weight: 500;
+
+  &.overdue {
+    color: #d32f2f;
+    font-weight: 600;
+  }
+
+  &.warning {
+    color: #f57c00;
+    font-weight: 600;
+  }
+
+  &.normal {
+    color: #1976d2;
+  }
+}
+
+// ANIMAÇÃO DE PULSE PARA ÍCONES
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+// LINHAS DA TABELA COM CORES
+.mat-row {
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  &.row-overdue {
+    background-color: #ffebee;
+    border-left: 4px solid #d32f2f;
+
+    &:hover {
+      background-color: #ffcdd2;
+    }
+  }
+
+  &.row-warning {
+    background-color: #fff8e1;
+    border-left: 4px solid #f57c00;
+
+    &:hover {
+      background-color: #ffecb3;
+    }
+  }
+}
+
+// AÇÕES
+.actions-cell {
+  .mat-icon-button {
+    margin: 0 2px;
+  }
+}
+
+// STATUS CHIPS
+.mat-chip {
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  &.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  &.status-in_progress {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+
+  &.status-completed {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  &.status-archived {
+    background-color: #e2e3e5;
+    color: #383d41;
+  }
+
+  &.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+}
+
+// MENSAGEM SEM DADOS
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: rgba(0, 0, 0, 0.54);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+}
+
+// LEGENDA
+.legend-container {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    color: #495057;
+  }
+
+  .legend-items {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    span {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+  }
+}
+
+// RESPONSIVIDADE
+@media (max-width: 768px) {
+  .movements-header {
+    flex-direction: column;
+    align-items: stretch;
+
+    .header-actions {
+      justify-content: center;
+    }
+  }
+
+  .legend-items {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

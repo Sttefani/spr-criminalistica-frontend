@@ -37,15 +37,147 @@
   }
 }
 
+/* ===== CONTROLES DE FILTRO MELHORADOS ===== */
 .list-controls {
   flex-shrink: 0;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+.controls-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.filters-row {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 
 .search-field {
-  width: 40%;
-  min-width: 250px;
+  min-width: 300px;
+  flex: 1;
+  max-width: 400px;
+
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
 }
+
+.service-filter {
+  min-width: 280px;
+  flex: 1;
+  max-width: 350px;
+
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Botão "Minhas Ocorrências" - FUNDO AZUL PADRÃO */
+.my-occurrences-filter {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  button {
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid #3b82f6;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    color: white;
+    text-transform: none;
+    letter-spacing: 0.5px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    }
+
+    &.active-filter {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      border-color: #1d4ed8;
+      box-shadow: 0 6px 16px rgba(29, 78, 216, 0.5);
+      transform: scale(1.05);
+
+      &:hover {
+        box-shadow: 0 8px 24px rgba(29, 78, 216, 0.6);
+        transform: scale(1.05) translateY(-2px);
+      }
+    }
+
+    mat-icon {
+      margin-right: 10px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: white;
+    }
+  }
+}
+/* Responsividade */
+@media (max-width: 1024px) {
+  .controls-row .filters-row {
+    max-width: 600px;
+  }
+
+  .search-field,
+  .service-filter {
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .list-controls {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .search-field,
+  .service-filter {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .my-occurrences-filter button {
+    padding: 12px 24px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .my-occurrences-filter button {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+/* ===== RESTO DO CSS ===== */
 
 .table-container {
   flex: 1;
@@ -87,17 +219,41 @@ table {
   color: rgba(0, 0, 0, 0.54);
 }
 
-// ==========================================================
-// ⚡ SOLUÇÕES PARA COLUNAS
-// ==========================================================
-
+/* ===== COLUNAS E TABELA ===== */
 ::ng-deep {
-
-  // Coluna de procedimento - maior largura
+  // Coluna de procedimento
   .mat-column-procedure {
-    width: 220px !important;
+    width: 180px !important;
     min-width: 220px !important;
     max-width: 220px !important;
+  }
+
+  // Coluna Serviço Forense
+  .mat-column-forensicService {
+    width: 100px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
+  }
+
+  // CORRIGIR: Coluna Cidade - MAIS LARGA
+  .mat-column-city {
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+  }
+
+  // CORRIGIR: Coluna Autoridade - MAIS LARGA
+  .mat-column-requestingAuthority {
+    width: 200px !important;
+    min-width: 200px !important;
+    max-width: 200px !important;
+  }
+
+  // Coluna do Perito Responsável
+  .mat-column-responsibleExpert {
+    width: 200px !important;
+    min-width: 200px !important;
+    max-width: 200px !important;
   }
 
   // Coluna de ações
@@ -110,6 +266,7 @@ table {
   .mat-table {
     table-layout: fixed !important;
   }
+
 
   // Ações - botões lado a lado
   td.mat-cell.mat-column-actions,
@@ -153,16 +310,13 @@ table {
   }
 }
 
-// ==========================================================
-// ⚡ PROCEDIMENTO E NÚMERO - LADO A LADO COM TRACINHO
-// ==========================================================
-
+/* ===== PROCEDIMENTO COM TRACINHO ===== */
 .multi-line-cell {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 8px !important;
+  gap: 6px !important;
   line-height: 1.2 !important;
   padding: 8px 0 !important;
   flex-wrap: nowrap !important;
@@ -175,16 +329,17 @@ table {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    max-width: 120px !important;
+    max-width: 110px !important;
   }
 
   .separator {
     flex-shrink: 0 !important;
     color: rgba(0, 0, 0, 0.5) !important;
     font-size: 0.8rem !important;
+    font-weight: bold !important;
 
     &::before {
-      content: "-" !important;
+      content: " - " !important;
     }
   }
 
@@ -197,34 +352,45 @@ table {
   }
 }
 
-// ==========================================================
-// STATUS CHIPS
-// ==========================================================
+/* ===== STATUS CHIPS CORRIGIDOS ===== */
 .status-chip {
-  padding: 4px 12px;
+  padding: 6px 14px;
   border-radius: 16px;
   font-size: 0.8rem;
-  font-weight: 500;
-  color: white;
+  font-weight: 600;
   display: inline-block;
   text-transform: capitalize;
   white-space: nowrap;
+  border: 1px solid transparent;
 
-  &.aguardando_perito {
-    background-color: #ffc107;
-    color: #333;
+  &.pending, &.aguardando_perito {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeaa7;
   }
-  &.em_andamento {
-    background-color: #17a2b8;
+
+  &.in_progress, &.em_andamento {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #b8daff;
   }
-  &.concluida {
-    background-color: #28a745;
+
+  &.completed, &.concluida {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
   }
-  &.arquivada {
-    background-color: #6c757d;
+
+  &.archived, &.arquivada {
+    background-color: #e2e3e5;
+    color: #383d41;
+    border-color: #d6d8db;
   }
-  &.cancelada {
-    background-color: #dc3545;
+
+  &.canceled, &.cancelada {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
   }
 }
 

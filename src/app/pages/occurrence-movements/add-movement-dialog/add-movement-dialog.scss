@@ -1,0 +1,35 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+mat-dialog-content {
+  min-width: 400px;
+  padding: 20px;
+}
+
+.case-info {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0;
+}
+
+mat-form-field {
+  display: block;
+}
+
+button[mat-raised-button] {
+  margin-left: 8px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}

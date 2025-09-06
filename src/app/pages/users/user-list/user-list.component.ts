@@ -16,10 +16,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Serviços e Componentes
 import { UserService } from '../../../services/user.service';
 import { ApproveUserComponent } from '../../../components/dialogs/approve-user/approve-user.component';
+import { ManageUserServicesComponent } from '../../../components/dialogs/manage-user-services/manage-user-services.component';
+// ✅ 1. Importar o novo componente de diálogo
 
 @Component({
   selector: 'app-user-list',
@@ -28,7 +31,7 @@ import { ApproveUserComponent } from '../../../components/dialogs/approve-user/a
     CommonModule, RouterModule, ReactiveFormsModule, MatTableModule,
     MatPaginatorModule, MatProgressSpinnerModule, MatFormFieldModule,
     MatInputModule, MatSelectModule, MatSnackBarModule, MatDialogModule,
-    MatIconModule, MatSlideToggleModule
+    MatIconModule, MatSlideToggleModule, MatTooltipModule
   ],
   templateUrl: './user-list.html',
   styleUrls: ['./user-list.scss']
@@ -39,12 +42,10 @@ export class UserListComponent implements OnInit, AfterViewInit {
   totalData = 0;
   isLoadingResults = true;
 
-  // Controles de formulário para os filtros
   searchControl = new FormControl('');
   statusControl = new FormControl('all');
-  authorityToggleControl = new FormControl(false); // Propriedade adicionada
+  authorityToggleControl = new FormControl(false);
 
-  // Armazena a lista vinda da API para filtragem local
   private apiUsersResult: any[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -58,7 +59,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    // Escuta mudanças na paginação OU nos filtros de API (busca e status)
     merge(this.paginator.page, this.searchControl.valueChanges.pipe(debounceTime(400)), this.statusControl.valueChanges)
       .pipe(
         startWith({}),
@@ -75,17 +75,15 @@ export class UserListComponent implements OnInit, AfterViewInit {
       ).subscribe(response => {
         this.isLoadingResults = false;
         this.totalData = response.total;
-        this.apiUsersResult = response.data; // Armazena o resultado da API
-        this.applyFrontendFilters(); // Aplica o filtro de autoridade localmente
+        this.apiUsersResult = response.data;
+        this.applyFrontendFilters();
       });
 
-    // Escuta APENAS o toggle de autoridade para aplicar o filtro local
     this.authorityToggleControl.valueChanges.subscribe(() => {
       this.applyFrontendFilters();
     });
   }
 
-  // Aplica o filtro de autoridade na lista que já foi carregada
   private applyFrontendFilters(): void {
     if (this.authorityToggleControl.value) {
       this.dataSource.data = this.apiUsersResult.filter(user => user.authority !== null && user.authority !== undefined);
@@ -94,9 +92,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Recarrega os dados da API
   reloadData(): void {
-    // Dispara o evento que o `merge` está escutando para recarregar da API
     this.paginator.page.emit();
   }
 
@@ -130,19 +126,34 @@ export class UserListComponent implements OnInit, AfterViewInit {
       this.reloadData();
     });
   }
+
+  // ✅ 2. MÉTODO IMPLEMENTADO
   manageUserServices(user: any): void {
-  // TODO: Implementar dialog de gerenciamento
-  console.log('Gerenciar serviços para:', user.name);
-  this.snackBar.open(`Funcionalidade em desenvolvimento para ${user.name}`, 'Fechar', { duration: 3000 });
+    // Apenas para perfis relevantes
+    if (user.role !== 'perito_oficial' && user.role !== 'servidor_administrativo') {
+        this.snackBar.open('Esta ação está disponível apenas para Peritos e Servidores Administrativos.', 'Fechar', { duration: 4000 });
+        return;
+    }
+
+    const dialogRef = this.dialog.open(ManageUserServicesComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      data: { user: user }
+    });
+
+    // Recarrega os dados da lista quando o diálogo é fechado com sucesso
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.reloadData();
+      }
+    });
+  }
+
+  formatForensicServices(services: any[]): string {
+    if (!services || services.length === 0) {
+      return 'Nenhum';
+    }
+    return services.map(service => service.acronym || service.name).join(', ');
+  }
 }
 
-/**
- * Formata lista de serviços forenses para exibição
- */
-formatForensicServices(services: any[]): string {
-  if (!services || services.length === 0) {
-    return 'Nenhum serviço';
-  }
-  return services.map(service => service.acronym || service.name).join(', ');
-}
-}

@@ -1,0 +1,94 @@
+<h2 mat-dialog-title>
+  <mat-icon>timeline</mat-icon>
+  Histórico de Movimentações - {{ data.caseNumber }}
+  <span class="movements-count">({{ data.movements.length }} movimentações)</span>
+</h2>
+
+<mat-dialog-content>
+  @if (data.movements.length === 0) {
+    <div class="no-movements">
+      <mat-icon>assignment</mat-icon>
+      <p>Nenhuma movimentação encontrada para este caso.</p>
+    </div>
+  } @else {
+    <div class="movements-timeline">
+      @for (movement of data.movements; track movement.id) {
+        <mat-card class="movement-card">
+          <mat-card-header>
+            <div class="movement-header">
+              <div class="movement-number">{{ $index + 1 }}</div>
+              <div class="movement-info">
+                <h4>{{ movement.description }}</h4>
+                <div class="movement-meta">
+                  <span class="performed-by">
+                    <mat-icon>person</mat-icon>
+                    {{ movement.performedBy.name }}
+                  </span>
+                  <span class="performed-date">
+                    <mat-icon>schedule</mat-icon>
+                    {{ formatDate(movement.performedAt) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </mat-card-header>
+
+          <mat-card-content>
+            @if (movement.deadline) {
+              <div class="deadline-info">
+                <mat-icon>event</mat-icon>
+                <span>Prazo: {{ formatDate(movement.deadline) }}</span>
+              </div>
+            }
+
+            @if (movement.wasExtended) {
+              <div class="extension-info">
+                <mat-chip color="accent">
+                  <mat-icon>update</mat-icon>
+                  Prorrogação
+                </mat-chip>
+                @if (movement.extensionJustification) {
+                  <p class="justification">{{ movement.extensionJustification }}</p>
+                }
+              </div>
+            }
+
+            @if (movement.isSystemGenerated) {
+              <mat-chip color="primary" class="system-chip">
+                <mat-icon>computer</mat-icon>
+                Sistema
+              </mat-chip>
+            }
+            <!-- Botões de ação para super admin -->
+              @if (data.isSuperAdmin) {
+                <div class="admin-actions">
+                  <button mat-icon-button color="primary"
+                          (click)="editMovement(movement)"
+                          matTooltip="Editar movimentação">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn"
+                          (click)="deleteMovement(movement)"
+                          matTooltip="Deletar movimentação">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              }
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  @if (data.movements.length > 0) {
+    <button mat-stroked-button color="accent" (click)="exportToPDF()">
+      <mat-icon>picture_as_pdf</mat-icon>
+      Exportar PDF
+    </button>
+  }
+  <button mat-raised-button color="primary" (click)="onClose()">
+    Fechar
+  </button>
+</mat-dialog-actions>

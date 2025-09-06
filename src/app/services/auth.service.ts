@@ -128,10 +128,15 @@ export class AuthService {
     const decodedToken = this.getDecodedToken();
     return decodedToken ? decodedToken.name : null;
   }
+   // NOVO MÉTODO: Retorna o ID do usuário
+  getUserId(): string | null {
+    const decodedToken = this.getDecodedToken();
+    return decodedToken ? decodedToken.sub: null; // 'sub' é o campo padrão para o ID do usuário em JWTs
+  }
 
   getUserRole(): string | null {
     const decodedToken = this.getDecodedToken();
-    return decodedToken ? decodedToken.role : null;
+    return decodedToken ? decodedToken.role: null;
   }
 
   private saveToken(token: string): void {

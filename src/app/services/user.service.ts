@@ -23,7 +23,6 @@ export class UserService {
   /**
    * Busca a lista de usuários da API com paginação e filtros.
    */
-  // CORREÇÃO: Adicionado o parâmetro opcional 'role' para filtrar por função.
   getUsers(page: number, limit: number, status: string, search: string, role?: string): Observable<any> {
     const headers = this.getAuthHeaders();
     let params = new HttpParams()
@@ -36,10 +35,22 @@ export class UserService {
     if (search) {
       params = params.append('search', search);
     }
-    // CORREÇÃO: Se uma função for fornecida, ela é adicionada como parâmetro na requisição.
     if (role) {
       params = params.append('role', role);
     }
+
+    return this.http.get(this.apiUrl, { headers, params });
+  }
+
+  /**
+   * Busca uma lista grande de usuários para preencher seletores (dropdowns).
+   */
+  getAllUsers(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    const params = new HttpParams()
+      .set('page', '1')
+      .set('limit', '1000')
+      .set('status', 'active');
 
     return this.http.get(this.apiUrl, { headers, params });
   }
@@ -87,44 +98,39 @@ export class UserService {
   }
 
   /**
-   * Busca todos os usuários sem paginação.
+   * Busca os serviços forenses vinculados a um usuário.
    */
-  getAllUsers(): Observable<any> {
+  getUserForensicServices(userId: string): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.get(this.apiUrl, { headers });
+    return this.http.get(`${this.apiUrl}/${userId}/forensic-services`, { headers });
   }
-  getPeritosOficiais(): Observable<any> {
-  const headers = this.getAuthHeaders();
-  const params = new HttpParams()
-    .set('role', 'perito_oficial')
-    .set('status', 'active')
-    .set('page', '1')
-    .set('limit', '1000');
 
-  return this.http.get(this.apiUrl, { headers, params });
-}
-/**
- * Busca os serviços forenses vinculados a um usuário.
- */
-getUserForensicServices(userId: string): Observable<any> {
-  const headers = this.getAuthHeaders();
-  return this.http.get(`${this.apiUrl}/${userId}/forensic-services`, { headers });
+  /**
+   * ✅ MÉTODO RESTAURADO
+   * Vincula um usuário a múltiplos serviços forenses.
+   */
+  linkUserToForensicServices(userId: string, forensicServiceIds: string[]): Observable<any> {
+    const headers = this.getAuthHeaders();
+    const body = { forensicServiceIds };
+    return this.http.post(`${this.apiUrl}/${userId}/forensic-services`, body, { headers });
+  }
+
+  /**
+   * ✅ MÉTODO RESTAURADO
+   * Desvincula um usuário de um serviço forense específico.
+   */
+  unlinkUserFromForensicService(userId: string, serviceId: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete(`${this.apiUrl}/${userId}/forensic-services/${serviceId}`, { headers });
+  }
+
+  /**
+   * Substitui TODOS os serviços de um usuário pela lista de IDs fornecida.
+   */
+  updateUserForensicServices(userId: string, forensicServiceIds: string[]): Observable<any> {
+    const headers = this.getAuthHeaders();
+    const body = { forensicServiceIds };
+    return this.http.put(`${this.apiUrl}/${userId}/forensic-services`, body, { headers });
+  }
 }
 
-/**
- * Vincula um usuário a múltiplos serviços forenses.
- */
-linkUserToForensicServices(userId: string, forensicServiceIds: string[]): Observable<any> {
-  const headers = this.getAuthHeaders();
-  const body = { forensicServiceIds };
-  return this.http.post(`${this.apiUrl}/${userId}/forensic-services`, body, { headers });
-}
-
-/**
- * Desvincula um usuário de um serviço forense específico.
- */
-unlinkUserFromForensicService(userId: string, serviceId: string): Observable<any> {
-  const headers = this.getAuthHeaders();
-  return this.http.delete(`${this.apiUrl}/${userId}/forensic-services/${serviceId}`, { headers });
-}
-}

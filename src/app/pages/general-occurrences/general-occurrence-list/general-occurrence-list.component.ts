@@ -12,23 +12,44 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select'; // Adicionado
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatChipsModule } from '@angular/material/chips'; // Adicionado
 
 // Serviços e Componentes
 import { GeneralOccurrenceService, GeneralOccurrence } from '../../../services/general-occurrence.service';
 import { AuthService } from '../../../services/auth.service';
+import { ForensicService, ForensicServiceData } from '../../../services/forensic-services.service'; // Adicionado
+import { UserService } from '../../../services/user.service'; // Adicionado
 import { OccurrenceDetailsDialogComponent } from '../occurrence-details-dialog/occurrence-details-dialog.component';
 
 @Component({
   selector: 'app-general-occurrence-list',
   standalone: true,
   imports: [
-    CommonModule, RouterModule, ReactiveFormsModule, MatTableModule, MatPaginatorModule,
-    MatProgressSpinnerModule, MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatIconModule, MatSnackBarModule, MatTooltipModule, MatDialogModule, TitleCasePipe
+    // Módulos básicos
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+
+    // Módulos do Material
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule, // Adicionado
+    MatButtonModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatTooltipModule,
+    MatDialogModule,
+    MatChipsModule, // Adicionado
+
+    // Pipes
   ],
   templateUrl: './general-occurrence-list.html',
   styleUrls: ['./general-occurrence-list.component.scss']
@@ -36,16 +57,23 @@ import { OccurrenceDetailsDialogComponent } from '../occurrence-details-dialog/o
 export class GeneralOccurrenceListComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource = new MatTableDataSource<GeneralOccurrence>();
   displayedColumns: string[] = [
-    'caseNumber', 'procedure', 'city', 'requestingAuthority', 'responsibleExpert', 'status', 'actions'
+    'caseNumber', 'procedure', 'forensicService', 'city', 'requestingAuthority', 'responsibleExpert', 'status', 'actions'
   ];
 
   totalData = 0;
   isLoadingResults = true;
   searchControl = new FormControl('');
 
+  // NOVOS CONTROLES E PROPRIEDADES
+  serviceFilterControl = new FormControl('all'); // Para o dropdown de serviço
+  showMyOccurrencesOnly = false; // Para o botão "Minhas Ocorrências"
+
   userRole: string | null = null;
   canCreateOrEdit = false;
   isSuperAdmin = false;
+
+  userForensicServices: ForensicServiceData[] = []; // Para armazenar os serviços do usuário
+  isLoadingServices = false; // Para indicar carregamento dos serviços
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -56,37 +84,55 @@ export class GeneralOccurrenceListComponent implements OnInit, AfterViewInit, On
     private occurrenceService: GeneralOccurrenceService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog // A injeção está correta aqui.
+    public dialog: MatDialog,
+    // NOVOS SERVIÇOS INJETADOS
+    private forensicService: ForensicService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
-    this.userRole = this.authService.getUserRole();
-    this.isSuperAdmin = this.userRole === 'super_admin';
-    const editingRoles = ['super_admin', 'servidor_administrativo', 'perito_oficial'];
-    this.canCreateOrEdit = this.userRole ? editingRoles.includes(this.userRole) : false;
-  }
+  console.log('=== COMPONENTE INICIANDO ===');
+  this.userRole = this.authService.getUserRole();
+  console.log('User role recuperado:', this.userRole);
+  this.isSuperAdmin = this.userRole === 'super_admin';
+  const editingRoles = ['super_admin', 'servidor_administrativo', 'perito_oficial'];
+  this.canCreateOrEdit = this.userRole ? editingRoles.includes(this.userRole) : false;
 
+  console.log('Chamando loadUserForensicServices...');
+  // Carregar serviços forenses do usuário
+  this.loadUserForensicServices();
+}
   ngAfterViewInit(): void {
-    // Lógica reativa para buscar os dados
-    merge(this.paginator.page, this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()))
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.isLoadingResults = true;
-          const page = this.paginator.pageIndex + 1;
-          const limit = this.paginator.pageSize;
-          const search = this.searchControl.value || '';
-          return this.occurrenceService.getOccurrences(page, limit, search).pipe(
-            catchError(() => of({ data: [], total: 0 }))
-          );
-        })
-      ).subscribe(response => {
-        this.isLoadingResults = false;
-        this.totalData = response.total;
-        this.dataSource.data = response.data;
-      });
+    // Lógica reativa para buscar os dados incluindo TODOS os filtros
+    merge(
+      this.paginator.page,
+      this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()),
+      this.serviceFilterControl.valueChanges // Aciona recarga ao mudar o serviço
+      // O filtro showMyOccurrencesOnly será tratado pela chamada direta a reloadData() no toggleMyOccurrences()
+    ).pipe(
+      startWith({}),
+      switchMap(() => {
+        this.isLoadingResults = true;
+        const page = this.paginator.pageIndex + 1;
+        const limit = this.paginator.pageSize;
+        const search = this.searchControl.value || '';
+        const forensicServiceId: string | undefined =
+  this.serviceFilterControl.value === 'all' || this.serviceFilterControl.value === null
+    ? undefined
+    : this.serviceFilterControl.value;
+        const onlyMine = this.showMyOccurrencesOnly; // Pega o estado do botão "Minhas Ocorrências"
 
-    // Recarrega os dados quando a janela/aba volta a ter foco
+        // ATUALIZAÇÃO DA CHAMADA DO SERVIÇO
+        return this.occurrenceService.getOccurrences(page, limit, search, forensicServiceId, onlyMine).pipe(
+          catchError(() => of({ data: [], total: 0 }))
+        );
+      })
+    ).subscribe(response => {
+      this.isLoadingResults = false;
+      this.totalData = response.total;
+      this.dataSource.data = response.data; // Os filtros agora são aplicados no backend
+    });
+
     window.addEventListener('focus', this.focusHandler);
   }
 
@@ -95,16 +141,63 @@ export class GeneralOccurrenceListComponent implements OnInit, AfterViewInit, On
     window.removeEventListener('focus', this.focusHandler);
   }
 
-  reloadData(): void {
-    if (this.paginator) {
-      // Emite um evento de página para acionar o 'merge' e recarregar os dados
-      this.paginator.page.emit();
+  private async loadUserForensicServices(): Promise<void> {
+    if (!this.userRole || this.userRole === 'super_admin') {
+      // Super admin vê todos os serviços
+      try {
+        this.isLoadingServices = true;
+        const response: any = await this.forensicService.getAllForensicServices().toPromise();
+        this.userForensicServices = Array.isArray(response) ? response : (response?.data || []);
+      } catch (error) {
+        console.error('Erro ao carregar serviços:', error);
+      } finally {
+        this.isLoadingServices = false;
+      }
+    } else if (this.userRole === 'perito_oficial' || this.userRole === 'servidor_administrativo') {
+      // Carregar apenas serviços do usuário
+      try {
+        this.isLoadingServices = true;
+        const userId = this.authService.getUserId();
+        if (userId) {
+          const response = await this.userService.getUserForensicServices(userId).toPromise();
+          this.userForensicServices = response?.forensicServices || [];
+        }
+      } catch (error) {
+        console.error('Erro ao carregar serviços do usuário:', error);
+      } finally {
+        this.isLoadingServices = false;
+      }
     }
+  }
+
+  // NOVO MÉTODO: Toggle do filtro "Apenas minhas ocorrências"
+  public toggleMyOccurrences(): void {
+    this.showMyOccurrencesOnly = !this.showMyOccurrencesOnly;
+    this.reloadData(); // Recarrega os dados com o novo estado do filtro
+  }
+
+  public reloadData(): void {
+    this.isLoadingResults = true;
+    const page = this.paginator.pageIndex + 1;
+    const limit = this.paginator.pageSize;
+    const search = this.searchControl.value || '';
+    const forensicServiceId: string | undefined =
+      this.serviceFilterControl.value === 'all' || this.serviceFilterControl.value === null
+        ? undefined
+        : this.serviceFilterControl.value;
+    const onlyMine = this.showMyOccurrencesOnly; // Pega o estado do botão "Minhas Ocorrências"
+
+    this.occurrenceService.getOccurrences(page, limit, search, forensicServiceId, onlyMine).pipe(
+      catchError(() => of({ data: [], total: 0 }))
+    ).subscribe(response => {
+      this.isLoadingResults = false;
+      this.totalData = response.total;
+      this.dataSource.data = response.data;
+    });
   }
 
   deleteOccurrence(id: string, caseNumber: string | null): void {
     // NOTA: Recomenda-se um diálogo de confirmação (MatDialog) aqui.
-    // A função confirm() do browser não é suportada.
     this.occurrenceService.deleteOccurrence(id).subscribe({
       next: () => {
         this.snackBar.open('Ocorrência excluída com sucesso!', 'Fechar', { duration: 3000 });
@@ -117,15 +210,29 @@ export class GeneralOccurrenceListComponent implements OnInit, AfterViewInit, On
   }
 
   viewDetails(occurrence: GeneralOccurrence): void {
-    this.dialog.open(OccurrenceDetailsDialogComponent, {
-      width: '800px',
-      maxWidth: '95vw',
-      data: occurrence
-    });
-  }
+  this.dialog.open(OccurrenceDetailsDialogComponent, {
+    width: '95vw',           // ← Era 800px
+    maxWidth: '1400px',      // ← Limite máximo
+    height: '90vh',          // ← Altura controlada
+    maxHeight: '900px',      // ← Limite máximo
+    data: occurrence
+  });
+}
 
   trackById(index: number, item: GeneralOccurrence): string {
     return item.id!;
   }
-}
 
+  // Utilitários para o template (para os chips de status, se você quiser)
+  isPoolCase(occurrence: GeneralOccurrence): boolean {
+    return !occurrence.responsibleExpert;
+  }
+
+  getServiceBadgeColor(occurrence: GeneralOccurrence): string {
+    return this.isPoolCase(occurrence) ? 'accent' : 'primary';
+  }
+
+  getServiceBadgeText(occurrence: GeneralOccurrence): string {
+    return this.isPoolCase(occurrence) ? 'POOL' : 'ATRIBUÍDO';
+  }
+}

@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>Adicionar Movimentação</h2>
+
+<mat-dialog-content>
+  <p class="case-info"><strong>Caso:</strong> {{ data.caseNumber }}</p>
+
+  <form [formGroup]="movementForm">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descrição da Movimentação</mat-label>
+      <textarea
+        matInput
+        formControlName="description"
+        rows="4"
+        placeholder="Descreva detalhadamente a movimentação realizada...">
+      </textarea>
+      @if (movementForm.get('description')?.hasError('required')) {
+        <mat-error>
+          Descrição é obrigatória
+        </mat-error>
+      }
+      @if (movementForm.get('description')?.hasError('minlength')) {
+        <mat-error>
+          Descrição deve ter pelo menos 10 caracteres
+        </mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()">
+    Cancelar
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="movementForm.invalid"
+    (click)="onSubmit()">
+    Adicionar Movimentação
+  </button>
+</mat-dialog-actions>

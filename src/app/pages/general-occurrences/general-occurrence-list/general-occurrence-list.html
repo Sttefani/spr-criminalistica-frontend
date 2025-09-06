@@ -16,13 +16,47 @@
     </div>
   </header>
 
-  <!-- Controles de Busca -->
+  <!-- CONTROLES DE BUSCA CORRIGIDOS -->
   <section class="list-controls">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar por Nº do Caso ou Procedimento</mat-label>
-      <input matInput [formControl]="searchControl" placeholder="Digite para buscar..." autocomplete="off">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+    <div class="controls-row">
+      <!-- Primeira linha: Busca e Select lado a lado -->
+      <div class="filters-row">
+        <!-- Campo de Busca -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar por Nº do Caso ou Procedimento</mat-label>
+          <input matInput [formControl]="searchControl" placeholder="Digite para buscar..." autocomplete="off">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <!-- Filtro por Serviço Forense -->
+        <mat-form-field appearance="outline" class="service-filter">
+          <mat-label>Filtrar por Serviço</mat-label>
+          <mat-select [formControl]="serviceFilterControl">
+            <mat-option value="all">Todos os Serviços</mat-option>
+            @if (isLoadingServices) {
+              <mat-option disabled>Carregando...</mat-option>
+            } @else {
+              @for (service of userForensicServices; track service.id) {
+                <mat-option [value]="service.id">
+                  {{ service.name }} ({{ service.acronym }})
+                </mat-option>
+              }
+            }
+          </mat-select>
+          <mat-icon matSuffix>filter_list</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Segunda linha: Botão centralizado -->
+      <div class="my-occurrences-filter">
+        <button mat-stroked-button
+                [class.active-filter]="showMyOccurrencesOnly"
+                (click)="toggleMyOccurrences()">
+          <mat-icon>person</mat-icon>
+          Apenas minhas ocorrências
+        </button>
+      </div>
+    </div>
   </section>
 
   <!-- Container da Tabela -->
@@ -43,15 +77,24 @@
         </ng-container>
 
         <!-- Coluna Procedimento / Nº Procedimento -->
-       <ng-container matColumnDef="procedure">
-      <th mat-header-cell *matHeaderCellDef> Procedimento / Nº </th>
-      <td mat-cell *matCellDef="let item">
-        <div class="multi-line-cell">
-          <span class="primary-text">{{ item.procedure?.name || '-' }}</span>
-          <span class="secondary-text">{{ item.procedureNumber || 'Não informado' }}</span>
-        </div>
-      </td>
-      </ng-container>
+        <ng-container matColumnDef="procedure">
+            <th mat-header-cell *matHeaderCellDef> Procedimento / Nº </th>
+            <td mat-cell *matCellDef="let item">
+              <div class="multi-line-cell">
+                <span class="primary-text">{{ item.procedure?.name || '-' }}</span>
+                <span class="separator"></span>
+                <span class="secondary-text">{{ item.procedureNumber || 'Não informado' }}</span>
+              </div>
+            </td>
+        </ng-container>
+
+        <!-- Coluna de Serviço Pericial -->
+        <ng-container matColumnDef="forensicService">
+            <th mat-header-cell *matHeaderCellDef> Serviço </th>
+            <td mat-cell *matCellDef="let item" [matTooltip]="item.forensicService?.name || ''">
+              {{ item.forensicService?.acronym || '-' }}
+            </td>
+         </ng-container>
 
         <!-- Coluna Cidade -->
         <ng-container matColumnDef="city">
@@ -61,7 +104,7 @@
 
         <!-- Coluna Autoridade Requisitante -->
         <ng-container matColumnDef="requestingAuthority">
-          <th mat-header-cell *matHeaderCellDef> Autoridade Requisitante </th>
+          <th mat-header-cell *matHeaderCellDef> Autoridade</th>
           <td mat-cell *matCellDef="let item" [matTooltip]="item.requestingAuthority?.title || ''">
             {{ item.requestingAuthority?.name || '-' }}
           </td>
@@ -69,7 +112,7 @@
 
         <!-- Coluna Perito Responsável -->
         <ng-container matColumnDef="responsibleExpert">
-          <th mat-header-cell *matHeaderCellDef> Perito Responsável </th>
+          <th mat-header-cell *matHeaderCellDef> Perito </th>
           <td mat-cell *matCellDef="let item"> {{ item.responsibleExpert?.name || 'Não atribuído' }} </td>
         </ng-container>
 
@@ -85,11 +128,10 @@
           </td>
         </ng-container>
 
-        <!-- ✅ COLUNA AÇÕES ATUALIZADA -->
+        <!-- Coluna Ações -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef class="mat-column-actions"> Ações </th>
           <td mat-cell *matCellDef="let item" class="mat-column-actions">
-            <!-- BOTÃO DE VISUALIZAR -->
             <button mat-icon-button color="accent" (click)="viewDetails(item)" title="Ver Detalhes">
               <mat-icon>visibility</mat-icon>
             </button>
@@ -123,4 +165,3 @@
     </mat-paginator>
   </section>
 </div>
-

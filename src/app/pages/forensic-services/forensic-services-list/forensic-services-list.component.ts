@@ -52,7 +52,7 @@ export class ForensicServicesListComponent implements OnInit {
   userRole: string | null = null;
   canCreateOrEdit = false;
   isSuperAdmin = false;
-deleteForensicServices: any;
+  deleteForensicServices: any;
 
   constructor(
     private forensicService: ForensicService,
