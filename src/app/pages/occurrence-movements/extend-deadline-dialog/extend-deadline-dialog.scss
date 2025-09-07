@@ -1,0 +1,53 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+mat-dialog-content {
+  min-width: 400px;
+  padding: 20px;
+}
+
+.case-info {
+  margin-bottom: 20px;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 14px;
+  border-left: 4px solid #1976d2;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0;
+}
+
+mat-form-field {
+  display: block;
+}
+
+button[mat-raised-button] {
+  margin-left: 8px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+input[type="number"] {
+  text-align: right;
+}
+
+// Estilo para campos de erro
+mat-error {
+  font-size: 12px;
+}
+
+// Responsividade
+@media (max-width: 480px) {
+  mat-dialog-content {
+    min-width: 300px;
+    padding: 16px;
+  }
+}

@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>Prorrogar Prazo</h2>
+
+<mat-dialog-content>
+  <p class="case-info"><strong>Caso:</strong> {{ data.caseNumber }}</p>
+
+  <form [formGroup]="extendForm">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Dias de Prorrogação</mat-label>
+      <input matInput
+             type="number"
+             formControlName="extensionDays"
+             min="1"
+             max="365"
+             placeholder="Ex: 15">
+      <mat-hint>Entre 1 e 365 dias</mat-hint>
+      @if (extendForm.get('extensionDays')?.hasError('required')) {
+        <mat-error>Dias de prorrogação é obrigatório</mat-error>
+      }
+      @if (extendForm.get('extensionDays')?.hasError('min')) {
+        <mat-error>Mínimo 1 dia</mat-error>
+      }
+      @if (extendForm.get('extensionDays')?.hasError('max')) {
+        <mat-error>Máximo 365 dias</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Justificativa</mat-label>
+      <textarea matInput
+                formControlName="justification"
+                rows="4"
+                placeholder="Explique o motivo da prorrogação...">
+      </textarea>
+      @if (extendForm.get('justification')?.hasError('required')) {
+        <mat-error>Justificativa é obrigatória</mat-error>
+      }
+      @if (extendForm.get('justification')?.hasError('minlength')) {
+        <mat-error>Justificativa deve ter pelo menos 20 caracteres</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button
+          color="warn"
+          [disabled]="extendForm.invalid"
+          (click)="onSubmit()">
+    Prorrogar Prazo
+  </button>
+</mat-dialog-actions>

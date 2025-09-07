@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 // Suas interfaces (mantém iguais)
@@ -89,12 +89,22 @@ export class OccurrenceMovementsService {
     return this.http.get<OccurrenceMovementResponse[]>(`${this.apiUrl}/occurrence/${occurrenceId}`, { headers: this.getHeaders() });
   }
 
-  getOccurrencesWithDeadlineStatus(): Observable<any[]> {
-    console.log('=== FAZENDO REQUISIÇÃO COM TOKEN CORRETO ===');
-    return this.http.get<any[]>(`${this.apiUrl}/deadline-status`, { headers: this.getHeaders() });
+  getOccurrencesWithDeadlineStatus(page: number = 1, limit: number = 10, search?: string): Observable<any> {
+  let params = new HttpParams()
+    .set('page', page.toString())
+    .set('limit', limit.toString());
+
+  if (search && search.trim()) {
+    params = params.set('search', search.trim());
   }
 
-  extendDeadline(occurrenceId: string, request: ExtendDeadlineRequest): Observable<OccurrenceMovementResponse> {
+  return this.http.get<any>(`${this.apiUrl}/deadline-status`, {
+    headers: this.getHeaders(),
+    params: params
+  });
+}
+
+    extendDeadline(occurrenceId: string, request: ExtendDeadlineRequest): Observable<OccurrenceMovementResponse> {
     return this.http.post<OccurrenceMovementResponse>(`${this.apiUrl}/extend-deadline/${occurrenceId}`, request, { headers: this.getHeaders() });
   }
 

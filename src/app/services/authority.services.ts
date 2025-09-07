@@ -62,4 +62,5 @@ export class AuthorityService {
     const headers = this.getAuthHeaders(); // <-- USA o novo método
     return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers });
   }
+
 }

@@ -2,19 +2,50 @@
   <!-- Cabeçalho -->
   <header class="movements-header">
     <h1 class="movements-title">Movimentações de Ocorrências</h1>
+
     <div class="header-actions">
       <button mat-stroked-button color="primary" routerLink="/dashboard" class="header-button">
         <mat-icon>dashboard</mat-icon>
         Voltar ao Dashboard
       </button>
       @if (isSuperAdmin) {
-      <button mat-raised-button color="accent" (click)="updateFlags()">
-       <mat-icon>refresh</mat-icon>
+        <button mat-raised-button color="accent" (click)="updateFlags()">
+          <mat-icon>refresh</mat-icon>
           Atualizar Flags
         </button>
       }
     </div>
   </header>
+
+  <!-- Barra de Filtros -->
+  <section class="filters-container"
+           [class.has-results]="occurrences.length > 0 && searchTerm"
+           [class.loading]="isLoading">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar ocorrências</mat-label>
+      <input matInput
+             placeholder="Número do caso, perito, serviço..."
+             [(ngModel)]="searchTerm"
+             (input)="searchTerm = $event.target.value.trim(); filterOccurrences()"
+             (paste)="onPaste($event)">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    @if (searchTerm) {
+      <button mat-icon-button (click)="clearSearch()" matTooltip="Limpar busca">
+        <mat-icon>clear</mat-icon>
+      </button>
+    }
+
+    <span class="results-count"
+          [class.no-results]="occurrences.length === 0 && searchTerm">
+      @if (searchTerm) {
+        {{ occurrences.length }} encontrada(s) de {{ totalItems }}
+      } @else {
+        {{ totalItems }} ocorrências
+      }
+    </span>
+  </section>
 
   <!-- Container da Tabela -->
   <section class="table-container mat-elevation-z8">
@@ -98,10 +129,12 @@
               <!-- Prorrogar Prazo -->
               <button mat-icon-button color="warn"
                       (click)="extendDeadline(item)"
-                      matTooltip="Prorrogar prazo">
+                      matTooltip="Prorrogar prazo"
+                      [disabled]="!canExtendDeadline(item)">
                 <mat-icon>schedule</mat-icon>
               </button>
             }
+
           </td>
         </ng-container>
 
@@ -112,6 +145,16 @@
             [class.row-warning]="getDeadlineStatus(row) === 'warning'"></tr>
       </table>
     </div>
+
+    <!-- Paginação -->
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      [pageIndex]="currentPage - 1"
+      (page)="onPageEvent($event)"
+      showFirstLastButtons>
+    </mat-paginator>
 
     @if (!isLoading && occurrences.length === 0) {
       <div class="no-data-message">
@@ -139,3 +182,4 @@
       </div>
     </div>
   </section>
+</div>

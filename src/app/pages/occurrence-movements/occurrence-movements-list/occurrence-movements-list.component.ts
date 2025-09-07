@@ -14,7 +14,11 @@ import { OccurrenceMovementsService } from '../../../services/occurrence-movemen
 import { AuthService } from '../../../services/auth.service';
 import { AddMovementDialogComponent } from '../add-movement-dialog/add-movement-dialog.component';
 import { ViewMovementsDialogComponent } from '../view-movements-dialog/view-movements-dialog.component';
-
+import { MatInputModule } from "@angular/material/input";
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ExtendDeadlineDialogComponent } from '../extend-deadline-dialog/extend-deadline-dialog';
+import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 @Component({
   selector: 'app-occurrence-movements-list',
   standalone: true,
@@ -28,8 +32,12 @@ import { ViewMovementsDialogComponent } from '../view-movements-dialog/view-move
     MatSnackBarModule,
     MatDialogModule,
     MatChipsModule,
-    MatProgressSpinnerModule
-  ],
+    MatProgressSpinnerModule,
+    MatInputModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatPaginatorModule
+],
   templateUrl: './occurrence-movements-list.html',
   styleUrls: ['./occurrence-movements-list.scss']
 })
@@ -37,12 +45,20 @@ export class OccurrenceMovementsListComponent implements OnInit {
   displayedColumns: string[] = [
     'caseNumber', 'forensicService', 'responsibleExpert', 'deadline', 'status', 'actions'
   ];
-
-  occurrences: any[] = [];
+  searchTerm: string = '';
+  occurrences: any[] = [];           // Esta é a que a tabela usa
+  filteredOccurrences: any[] = [];
   isLoading = true;
   userRole: string | null = null;
   canAddMovement = false;
   isSuperAdmin = false;
+
+  // Propriedades de paginação - ADICIONE ESTAS
+  currentPage = 1;
+  pageSize = 10;
+  totalItems = 0;
+  totalPages = 0;
+  isLoadingMore = false;
 
   constructor(
     private movementsService: OccurrenceMovementsService,
@@ -59,39 +75,64 @@ export class OccurrenceMovementsListComponent implements OnInit {
     this.loadOccurrences();
   }
 
-  loadOccurrences(): void {
-    this.isLoading = true;
+loadOccurrences(): void {
+  this.isLoading = true;
 
-    this.movementsService.getOccurrencesWithDeadlineStatus().subscribe({
-      next: (data: any) => {
-        console.log('=== ESTRUTURA REAL DOS DADOS ===');
-        console.log('Array completo:', data);
+  this.movementsService.getOccurrencesWithDeadlineStatus(
+    this.currentPage,
+    this.pageSize,
+    this.searchTerm
+  ).subscribe({
+    next: (response: any) => {
+      console.log('=== RESPOSTA PAGINADA ===');
+      console.log('Dados:', response.data);
+      console.log('Paginação:', response.pagination);
 
-        if (data && data.length > 0) {
-          console.log('Primeiro item completo:', data[0]);
-          console.log('Campos disponíveis:', Object.keys(data[0]));
+      // Atualizar dados
+      this.occurrences = response.data || [];
+      this.filteredOccurrences = [...this.occurrences];
 
-          // Verificar estruturas aninhadas
-          if (data[0].forensicService) {
-            console.log('forensicService:', data[0].forensicService);
-            console.log('Campos do forensicService:', Object.keys(data[0].forensicService));
-          }
+      // Atualizar metadados de paginação
+      this.totalItems = response.pagination?.total || 0;
+      this.totalPages = response.pagination?.totalPages || 0;
+      this.currentPage = response.pagination?.page || 1;
 
-          if (data[0].responsibleExpert) {
-            console.log('responsibleExpert:', data[0].responsibleExpert);
-          }
-        }
+      this.isLoading = false;
+    },
+    error: (error: any) => {
+      console.log('Erro:', error.status, error.message);
+      this.isLoading = false;
+    }
+  });
+}
+  filterOccurrences(): void {
+  // Aplicar trim no termo de busca
+  const searchTerm = this.searchTerm.trim();
 
-        // MOSTRAR OS DADOS MESMO SE DIFERENTES
-        this.occurrences = data || [];
-        this.isLoading = false;
-      },
-      error: (error: any) => {
-        console.log('Erro:', error.status, error.message);
-        this.isLoading = false;
-      }
+  if (!searchTerm) {
+    this.occurrences = [...this.filteredOccurrences];
+  } else {
+    const term = searchTerm.toLowerCase();
+    this.occurrences = this.filteredOccurrences.filter(occurrence => {
+      const searchableText = [
+        occurrence.caseNumber,
+        occurrence.case_number,
+        occurrence.id,
+        occurrence.responsibleExpert?.name,
+        occurrence.forensicService?.name
+      ].filter(Boolean)
+       .join(' ')
+       .toLowerCase()
+       .trim(); // Trim também no texto dos dados
+
+      return searchableText.includes(term);
     });
   }
+}
+clearSearch(): void {
+  this.searchTerm = '';
+  this.filterOccurrences();
+}
 
   getDeadlineStatus(occurrence: any): 'overdue' | 'warning' | 'normal' {
     if (occurrence.isOverdue) return 'overdue';
@@ -147,6 +188,20 @@ export class OccurrenceMovementsListComponent implements OnInit {
       }
     });
   }
+  canExtendDeadline(occurrence: any): boolean {
+  // Super admin e servidor administrativo podem prorrogar qualquer ocorrência
+  if (this.userRole === 'super_admin' || this.userRole === 'servidor_administrativo') {
+    return true;
+  }
+
+  // Perito oficial só pode prorrogar ocorrências atribuídas a ele
+  if (this.userRole === 'perito_oficial') {
+    const currentUserId = this.authService.getUserId();
+    return occurrence.responsibleExpert?.id === currentUserId;
+  }
+
+  return false;
+}
 
 viewMovements(occurrence: any): void {
   console.log('Carregando movimentações para:', occurrence.caseNumber);
@@ -174,9 +229,40 @@ viewMovements(occurrence: any): void {
 }
 
   extendDeadline(occurrence: any): void {
-    // TODO: Abrir modal para prorrogar prazo
-    console.log('Prorrogar prazo de:', occurrence.caseNumber);
-  }
+  const dialogRef = this.dialog.open(ExtendDeadlineDialogComponent, {
+    width: '500px',
+    data: {
+      occurrenceId: occurrence.id,
+      caseNumber: occurrence.caseNumber,
+      currentDeadline: occurrence.deadline
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.movementsService.extendDeadline(
+        occurrence.id,
+        {
+          extensionDays: result.extensionDays,
+          justification: result.justification
+        }
+      ).subscribe({
+        next: (response) => {
+          this.snackBar.open(
+            `Prazo prorrogado por ${result.extensionDays} dias!`,
+            'Fechar',
+            { duration: 3000 }
+          );
+          this.loadOccurrences();
+        },
+        error: (error) => {
+          console.error('Erro ao prorrogar prazo:', error);
+          this.snackBar.open('Erro ao prorrogar prazo', 'Fechar', { duration: 3000 });
+        }
+      });
+    }
+  });
+}
 
   formatDate(date: string | Date): string {
     if (!date) return '-';
@@ -186,6 +272,30 @@ viewMovements(occurrence: any): void {
   trackById(index: number, item: any): string {
     return item.id;
   }
+  onPaste(event: any): void {
+  // Aguarda o paste ser processado antes de fazer trim
+  setTimeout(() => {
+    this.searchTerm = this.searchTerm.trim();
+    this.filterOccurrences();
+  }, 0);
+}
+// MÉTODOS DE PAGINAÇÃO - ADICIONE ESTES AQUI
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadOccurrences();
+  }
+
+  onPageSizeChange(pageSize: number): void {
+    this.pageSize = pageSize;
+    this.currentPage = 1; // Volta para primeira página
+    this.loadOccurrences();
+  }
+
+  onPageEvent(event: PageEvent): void {
+  this.currentPage = event.pageIndex + 1; // PageIndex começa em 0
+  this.pageSize = event.pageSize;
+  this.loadOccurrences();
+}
 
   updateFlags(): void {
     this.movementsService.updateDeadlineFlags().subscribe({

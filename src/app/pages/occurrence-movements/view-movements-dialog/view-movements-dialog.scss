@@ -1,16 +1,22 @@
-// Modal principal
+/* ===========================
+   Movements modal - CSS completo
+   Substitua todo o arquivo atual por este
+   =========================== */
+
+/* Modal principal */
 mat-dialog-content {
   width: 1200px;
   max-width: 90vw;
   height: 80vh;
   max-height: 900px;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: hidden; /* impede scroll horizontal */
   padding: 20px;
   background-color: #fafafa;
+  box-sizing: border-box;
 }
 
-// Título
+/* Título */
 h2[mat-dialog-title] {
   display: flex;
   align-items: center;
@@ -21,27 +27,38 @@ h2[mat-dialog-title] {
   color: white;
   border-radius: 8px 8px 0 0;
   font-size: 16px;
-  white-space: nowrap;
 
-  mat-icon {
-    color: white;
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  }
-
-  .movements-count {
-    font-size: 12px;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 3px 6px;
-    border-radius: 10px;
-    font-weight: normal;
-    margin-left: auto;
-    flex-shrink: 0;
-  }
+  /* permite quebra no título longo e não afeta ícones */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-break: anywhere;
 }
 
-// Quando não há movimentações
+/* ícone do título — mantenho explícito para não sumir */
+h2[mat-dialog-title] mat-icon {
+  color: white;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* contador no título */
+h2[mat-dialog-title] .movements-count {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 6px;
+  border-radius: 10px;
+  font-weight: normal;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Quando não há movimentações */
 .no-movements {
   text-align: center;
   padding: 60px 20px;
@@ -49,32 +66,31 @@ h2[mat-dialog-title] {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-  mat-icon {
-    font-size: 64px;
-    height: 64px;
-    width: 64px;
-    margin-bottom: 20px;
-    color: #ccc;
-  }
-
-  p {
-    font-size: 18px;
-    margin: 0;
-    font-weight: 500;
-  }
 }
 
-// Container das movimentações
+.no-movements mat-icon {
+  font-size: 64px;
+  height: 64px;
+  width: 64px;
+  margin-bottom: 20px;
+  color: #ccc;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Container das movimentações */
 .movements-timeline {
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
 }
 
-// Cards das movimentações
+/* Cards das movimentações */
 .movement-card {
   background: white;
   border-radius: 12px;
@@ -83,31 +99,36 @@ h2[mat-dialog-title] {
   transition: all 0.3s ease;
   width: 100%;
   max-width: 100%;
-
-  &:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-  }
-
-  &:nth-child(even) {
-    background-color: #f8f9fa;
-    border-left-color: #2196f3;
-  }
-
-  &:nth-child(odd) {
-    border-left-color: #1976d2;
-  }
+  box-sizing: border-box;
+  animation: slideInUp 0.3s ease-out;
 }
 
-// Header de cada movimentação
+.movement-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.movement-card:nth-child(even) {
+  background-color: #f8f9fa;
+  border-left-color: #2196f3;
+}
+
+.movement-card:nth-child(odd) {
+  border-left-color: #1976d2;
+}
+
+/* Header de cada movimentação */
 .movement-header {
   display: flex;
   align-items: flex-start;
   gap: 20px;
   width: 100%;
   padding: 20px;
+  box-sizing: border-box;
+  flex-wrap: wrap; /* permite quebrar em telas estreitas */
 }
 
+/* Número/bolinha */
 .movement-number {
   background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
   color: white;
@@ -123,59 +144,75 @@ h2[mat-dialog-title] {
   box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
 }
 
+/* Informação principal - importante: min-width:0 permite o flex encolher */
 .movement-info {
   flex: 1;
-  min-width: 0; // Importante para text overflow
-
-  h4 {
-    margin: 0 0 12px 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1a1a1a;
-    line-height: 1.4;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
+  min-width: 0; /* essencial para prevenir overflow em flex containers */
+  box-sizing: border-box;
 }
 
-// Metadados
+/* Título/descritivo dentro do card: garantir quebra mesmo para strings enormes */
+.movement-info h4 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-all;    /* quebra agressiva para eliminar scroll horizontal */
+  line-break: anywhere;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Metadados */
 .movement-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   width: 100%;
-
-  span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    color: #555;
-    background: rgba(25, 118, 210, 0.08);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-weight: 500;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 100%;
-
-    mat-icon {
-      font-size: 18px;
-      height: 18px;
-      width: 18px;
-      color: #1976d2;
-      flex-shrink: 0;
-    }
-  }
+  box-sizing: border-box;
 }
 
-// Conteúdo dos cards
+.movement-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #555;
+  background: rgba(25, 118, 210, 0.08);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.movement-meta span mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+  color: #1976d2;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Conteúdo dos cards */
 mat-card-content {
   padding: 0 20px 20px 20px;
   max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
 }
 
-// Informações de prazo
+/* Informações de prazo */
 .deadline-info {
   display: flex;
   align-items: center;
@@ -186,101 +223,114 @@ mat-card-content {
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  word-wrap: break-word;
-
-  mat-icon {
-    font-size: 20px;
-    height: 20px;
-    width: 20px;
-    color: #1976d2;
-    flex-shrink: 0;
-  }
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-sizing: border-box;
 }
 
-// Informações de prorrogação
+.deadline-info mat-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+  color: #1976d2;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Informações de prorrogação */
 .extension-info {
   margin-top: 16px;
-
-  mat-chip {
-    margin-bottom: 12px;
-    font-weight: 600;
-
-    mat-icon {
-      margin-right: 4px;
-    }
-  }
-
-  .justification {
-    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-    border: 2px solid #ffb74d;
-    border-radius: 8px;
-    padding: 16px;
-    margin: 12px 0 0 0;
-    font-size: 14px;
-    font-style: italic;
-    line-height: 1.6;
-    color: #e65100;
-    font-weight: 500;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
+  box-sizing: border-box;
 }
 
-// Chip de sistema
+.extension-info mat-chip {
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.extension-info mat-chip mat-icon {
+  margin-right: 4px;
+}
+
+.extension-info .justification {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  border: 2px solid #ffb74d;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 12px 0 0 0;
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.6;
+  color: #e65100;
+  font-weight: 500;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  /* quebra agressiva para evitar overflow mesmo com relato/justificativa muito longa */
+  word-break: break-all;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Chip de sistema */
 .system-chip {
   margin-top: 12px;
   background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
   color: #2e7d32;
   font-weight: 600;
-
-  mat-icon {
-    margin-right: 4px;
-  }
 }
 
-// Botões do modal
+.system-chip mat-icon {
+  margin-right: 4px;
+}
+
+/* Botões do modal */
 mat-dialog-actions {
   padding: 20px 24px;
   margin: 0;
   gap: 16px;
   background: #f5f5f5;
   border-top: 1px solid #e0e0e0;
-
-  button {
-    padding: 12px 24px;
-    font-weight: 600;
-    border-radius: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  button[mat-stroked-button] {
-    margin-right: auto;
-    border: 2px solid #ff9800;
-    color: #ff9800;
-
-    &:hover {
-      background: #ff9800;
-      color: white;
-    }
-
-    mat-icon {
-      margin-right: 8px;
-    }
-  }
-
-  button[mat-raised-button] {
-    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
-    color: white !important;
-
-    &:hover {
-      box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4);
-    }
-  }
+  box-sizing: border-box;
 }
 
-// Responsividade
+mat-dialog-actions button {
+  padding: 12px 24px;
+  font-weight: 600;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+button[mat-stroked-button] {
+  margin-right: auto;
+  border: 2px solid #ff9800;
+  color: #ff9800;
+}
+
+button[mat-stroked-button]:hover {
+  background: #ff9800;
+  color: white;
+}
+
+button[mat-stroked-button] mat-icon {
+  margin-right: 8px;
+}
+
+button[mat-raised-button] {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  color: white !important;
+}
+
+button[mat-raised-button]:hover {
+  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4);
+}
+
+/* Responsividade */
 @media (max-width: 1024px) {
   mat-dialog-content {
     width: 95vw;
@@ -319,11 +369,11 @@ mat-dialog-actions {
     align-items: flex-start;
     gap: 8px;
     padding: 16px;
+  }
 
-    .movements-count {
-      margin-left: 0;
-      font-size: 11px;
-    }
+  h2[mat-dialog-title] .movements-count {
+    margin-left: 0;
+    font-size: 11px;
   }
 
   .movements-timeline {
@@ -346,11 +396,11 @@ mat-dialog-actions {
   .movement-meta {
     flex-direction: column;
     gap: 8px;
+  }
 
-    span {
-      font-size: 12px;
-      padding: 4px 8px;
-    }
+  .movement-meta span {
+    font-size: 12px;
+    padding: 4px 8px;
   }
 
   .movement-info h4 {
@@ -360,20 +410,20 @@ mat-dialog-actions {
   mat-dialog-actions {
     padding: 16px;
     flex-direction: column;
+  }
 
-    button {
-      width: 100%;
-      margin: 0;
-    }
+  mat-dialog-actions button {
+    width: 100%;
+    margin: 0;
+  }
 
-    button[mat-stroked-button] {
-      order: 2;
-      margin-top: 8px;
-    }
+  button[mat-stroked-button] {
+    order: 2;
+    margin-top: 8px;
   }
 }
 
-// Scrollbar customizada
+/* Scrollbar customizada (visual) */
 mat-dialog-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -386,17 +436,13 @@ mat-dialog-content::-webkit-scrollbar-track {
 mat-dialog-content::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 4px;
-
-  &:hover {
-    background: #a8a8a8;
-  }
 }
 
-// Animação dos cards
-.movement-card {
-  animation: slideInUp 0.3s ease-out;
+mat-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
+/* Animação */
 @keyframes slideInUp {
   from {
     opacity: 0;
