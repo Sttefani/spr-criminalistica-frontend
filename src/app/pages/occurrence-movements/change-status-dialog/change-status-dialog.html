@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Alterar Status da Ocorrência</h2>
+
+<mat-dialog-content>
+  <div class="case-info">
+    <strong>Caso:</strong> {{ data.caseNumber }}
+    <br>
+    <strong>Status atual:</strong> {{ data.currentStatus.replace('_', ' ') }}
+  </div>
+
+  <form [formGroup]="statusForm">
+    <div class="status-options">
+      <h4>Novo Status:</h4>
+
+      <mat-radio-group formControlName="newStatus" class="radio-group">
+        <mat-radio-button value="CONCLUIDA" class="radio-option">
+          <div class="radio-content">
+            <span class="status-title">Concluída</span>
+            <span class="status-description">Laudo entregue e ocorrência finalizada</span>
+          </div>
+        </mat-radio-button>
+
+        <mat-radio-button value="CANCELADA" class="radio-option">
+          <div class="radio-content">
+            <span class="status-title">Cancelada</span>
+            <span class="status-description">Ocorrência cancelada por motivos administrativos</span>
+          </div>
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Observações (opcional)</mat-label>
+      <textarea matInput
+                formControlName="observations"
+                rows="3"
+                placeholder="Adicione observações sobre a mudança de status...">
+      </textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button
+          color="primary"
+          [disabled]="statusForm.invalid"
+          (click)="onSubmit()">
+    Alterar Status
+  </button>
+</mat-dialog-actions>

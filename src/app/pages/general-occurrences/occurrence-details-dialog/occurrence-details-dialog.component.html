@@ -65,6 +65,41 @@
       </mat-card>
     </div>
 
+    <!-- Informações de Finalização - só aparece se finalizada/cancelada -->
+    @if (data.status === 'CONCLUIDA' || data.status === 'CANCELADA') {
+      <mat-card appearance="outlined" class="full-width-card status-change-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon
+              [style.color]="data.status === 'CONCLUIDA' ? '#4caf50' : '#f44336'">
+              {{ data.status === 'CONCLUIDA' ? 'check_circle' : 'cancel' }}
+            </mat-icon>
+            Informações de Finalização
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="field-row">
+            <span class="label">Status Final:</span>
+            <span class="value"
+                  [style.color]="data.status === 'CONCLUIDA' ? '#4caf50' : '#f44336'"
+                  [style.font-weight]="'500'">
+              {{ data.status === 'CONCLUIDA' ? 'Concluída' : 'Cancelada' }}
+            </span>
+          </div>
+          <div class="field-row">
+            <span class="label">Data de Finalização:</span>
+            <span class="value">{{ data.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          @if (data.statusChangeObservations) {
+            <div class="field-row">
+              <span class="label">Observações:</span>
+              <div class="observations-text">{{ data.statusChangeObservations }}</div>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+
     <!-- Histórico - Largura total -->
     <mat-card appearance="outlined" class="full-width-card">
       <mat-card-header><mat-card-title>Histórico da Ocorrência</mat-card-title></mat-card-header>

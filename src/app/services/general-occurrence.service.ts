@@ -28,6 +28,7 @@ export interface GeneralOccurrence {
   requestingAuthority: BaseEntity | null;
   city: BaseEntity;
   occurrenceClassification: BaseEntity | null;
+  examTypes: BaseEntity[] | null;
   status: string;
   createdBy: UserReference;
   isLocked: boolean;
@@ -48,6 +49,7 @@ export interface GeneralOccurrenceForm {
   requestingAuthorityId: string | null;
   cityId: string;
   status: string;
+  examTypeIds: string[];
   isLocked: boolean;
   additionalFields: any;
 }

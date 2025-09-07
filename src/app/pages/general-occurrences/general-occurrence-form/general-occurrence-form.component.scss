@@ -1,124 +1,435 @@
-/* ==========================================================================
-   Estilos para o Formulário de Ocorrência
-   ========================================================================== */
-
-:host {
-  display: block;
-  height: 100%;
-}
+// general-occurrence-form.component.scss
 
 .edit-container {
-  padding: 8px;
-  box-sizing: border-box;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
 
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 }
 
-/* Cabeçalho com título e botão de voltar */
+// ==========================================================
+// HEADER
+// ==========================================================
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  gap: 10px;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
 
   .back-button {
-    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
   }
 
-  h1 {
-    font-size: 2rem;
+  .header-content {
+    flex: 1;
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2c3e50;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
+
+// ==========================================================
+// FORM CARD
+// ==========================================================
+.form-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .mat-mdc-card-content {
+    padding: 2.5rem;
+
+    @media (max-width: 768px) {
+      padding: 1.5rem;
+    }
+  }
+}
+
+// ==========================================================
+// FORM GRID LAYOUT
+// ==========================================================
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  // Campos que ocupam largura total
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  // Form fields com estilo aprimorado
+  .mat-mdc-form-field {
+    width: 100%;
+    transition: all 0.3s ease;
+
+    &:hover {
+      .mdc-notched-outline {
+        border-color: #1976d2;
+      }
+    }
+
+    &.mat-focused {
+      transform: translateY(-2px);
+
+      .mdc-notched-outline {
+        box-shadow: 0 4px 8px rgba(25, 118, 210, 0.2);
+      }
+    }
+
+    // Estilo especial para select múltiplo
+    &.exam-types-field {
+      .mat-mdc-select-value {
+        color: #1976d2;
+        font-weight: 500;
+      }
+
+      .mat-mdc-select-arrow {
+        color: #1976d2;
+      }
+    }
+  }
+}
+
+// ==========================================================
+// SECTION TITLES
+// ==========================================================
+.section-title {
+  grid-column: 1 / -1;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #34495e;
+  margin: 2rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e3f2fd;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #1976d2, #42a5f5);
+    border-radius: 1px;
+  }
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+// ==========================================================
+// ADDITIONAL FIELDS
+// ==========================================================
+.additional-fields-container {
+  grid-column: 1 / -1;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+
+  .additional-fields-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    h3 {
+      margin: 0;
+      color: #495057;
+      font-weight: 600;
+    }
+
+    button {
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(25, 118, 210, 0.2);
+      }
+    }
+  }
+
+  .additional-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: start;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .key-field,
+    .value-field {
+      margin: 0;
+    }
+
+    .remove-field-button {
+      margin-top: 0.5rem;
+      color: #dc3545;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+        transform: scale(1.1);
+      }
+
+      @media (max-width: 768px) {
+        margin-top: 0;
+        align-self: center;
+      }
+    }
+  }
+}
+
+// ==========================================================
+// FORM ACTIONS
+// ==========================================================
+.form-actions {
+  padding: 1.5rem 2.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-top: 1px solid #e0e0e0;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  button {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 120px;
+
+    &:not(:disabled):hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &[color="primary"] {
+      background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+
+      &:hover {
+        background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%);
+      }
+    }
+
+    .button-spinner {
+      margin-right: 0.5rem;
+    }
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// ==========================================================
+// LOADING STATE
+// ==========================================================
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+
+  mat-spinner {
+    margin-bottom: 1.5rem;
+  }
+
+  p {
+    color: #6c757d;
+    font-size: 1.1rem;
     font-weight: 500;
     margin: 0;
+  }
+}
+
+// ==========================================================
+// MATERIAL DESIGN CUSTOMIZATIONS
+// ==========================================================
+
+// Select múltiplo com visual aprimorado
+.mat-mdc-select-panel {
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e0e0e0;
+
+  .mat-mdc-option {
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: rgba(25, 118, 210, 0.08);
+    }
+
+    &.mdc-list-item--selected {
+      background-color: rgba(25, 118, 210, 0.12);
+      color: #1976d2;
+      font-weight: 600;
+    }
+  }
+}
+
+// Datepicker com visual melhorado
+.mat-datepicker-content {
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+// Tooltips
+.mat-mdc-tooltip {
+  background: rgba(44, 62, 80, 0.95);
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+// Hints e erros
+.mat-mdc-form-field {
+  .mat-mdc-form-field-hint,
+  .mat-mdc-form-field-error {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .mat-mdc-form-field-hint {
+    color: #6c757d;
+  }
+
+  .mat-mdc-form-field-error {
+    color: #dc3545;
+    font-weight: 500;
+  }
+}
+
+// ==========================================================
+// ANIMATIONS
+// ==========================================================
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .form-card {
-  flex-grow: 2;
-  overflow-y: auto; /* Permite scroll se o conteúdo for maior que a tela */
+  animation: slideInFromBottom 0.6s ease-out;
 }
 
-
-/* Grelha principal para os campos do formulário */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 5px; /* ✅ ESPAÇAMENTO REDUZIDO */
-}
-
-/* Título de cada secção do formulário */
-.section-title {
-  grid-column: 1 / -1; /* Ocupa a largura total da grelha */
-  font-size: 1.25rem;
-  font-weight: 500;
-  margin-top: 10px; /* ✅ MARGEM SUPERIOR REDUZIDA */
-  margin-bottom: 8px;
-  border-bottom: 2px solid #3f51b5; /* ✅ BORDA AZUL ADICIONADA */
-  padding-bottom: 8px;
-}
-
-/* Classe para campos que devem ocupar a largura total */
-.full-width {
-  grid-column: 1 / -1;
-}
-
-/* Container para os campos dinâmicos */
-.additional-fields-container {
-  grid-column: 1 / -1;
-  margin-top: 2px;
-}
-
-.additional-fields-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-
-  h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 500;
-  }
-}
-
-/* Linha de um campo adicional (chave, valor, botão) */
 .additional-field-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 8px; /* ✅ ESPAÇAMENTO REDUZIDO */
+  animation: slideInFromBottom 0.4s ease-out;
+}
 
-  .key-field, .value-field {
-    flex: 1;
-  }
-
-  .remove-field-button {
-    margin-top: 8px; /* Alinha o botão com os campos */
+// ==========================================================
+// RESPONSIVE IMPROVEMENTS
+// ==========================================================
+@media (max-width: 1024px) {
+  .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 }
 
-/* Ações do formulário (botões de salvar e cancelar) */
-.form-actions {
-  padding: 8px 0;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
+@media (max-width: 480px) {
+  .edit-container {
+    padding: 0.5rem;
+  }
 
-/* Spinner de carregamento para o botão de salvar */
-.button-spinner {
-  margin-right: 8px;
-}
+  .form-card .mat-mdc-card-content {
+    padding: 1rem;
+  }
 
-/* Ecrã de carregamento centralizado */
-.loading {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  gap: 16px;
-  color: rgba(0, 0, 0, 0.6);
-}
+  .form-grid {
+    gap: 0.75rem;
+  }
 
+  .section-title {
+    font-size: 1.1rem;
+    margin: 1.5rem 0 0.75rem 0;
+  }
+}

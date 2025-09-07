@@ -89,13 +89,22 @@ export class OccurrenceMovementsService {
     return this.http.get<OccurrenceMovementResponse[]>(`${this.apiUrl}/occurrence/${occurrenceId}`, { headers: this.getHeaders() });
   }
 
-  getOccurrencesWithDeadlineStatus(page: number = 1, limit: number = 10, search?: string): Observable<any> {
+  getOccurrencesWithDeadlineStatus(
+  page: number = 1,
+  limit: number = 10,
+  search?: string,
+  onlyMyOccurrences?: boolean
+): Observable<any> {
   let params = new HttpParams()
     .set('page', page.toString())
     .set('limit', limit.toString());
 
   if (search && search.trim()) {
     params = params.set('search', search.trim());
+  }
+
+  if (onlyMyOccurrences) {
+    params = params.set('onlyMyOccurrences', 'true');
   }
 
   return this.http.get<any>(`${this.apiUrl}/deadline-status`, {
@@ -115,4 +124,12 @@ export class OccurrenceMovementsService {
   updateDeadlineFlags(): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.apiUrl}/update-deadline-flags`, {}, { headers: this.getHeaders() });
   }
+  changeOccurrenceStatus(occurrenceId: string, newStatus: string, observations?: string): Observable<any> {
+  const url = `http://localhost:3000/general-occurrences/${occurrenceId}/status`;
+  return this.http.patch<any>(url, {
+    newStatus,
+    observations
+  }, { headers: this.getHeaders() });
+}
+
 }

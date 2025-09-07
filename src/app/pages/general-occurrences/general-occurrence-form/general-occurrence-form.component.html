@@ -138,6 +138,16 @@
                 }
               </mat-select>
             </mat-form-field>
+            <!-- Tipos de Exame -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Tipos de Exame</mat-label>
+              <mat-select formControlName="examTypeIds" multiple>
+                @for (examType of examTypes; track examType.id) {
+                  <mat-option [value]="examType.id">{{ examType.name }} ({{ examType.acronym }})</mat-option>
+                }
+              </mat-select>
+              <mat-hint>Selecione um ou mais tipos de exame (opcional)</mat-hint>
+            </mat-form-field>
 
             <!-- Seção de Campos Adicionais -->
             <div class="additional-fields-container">

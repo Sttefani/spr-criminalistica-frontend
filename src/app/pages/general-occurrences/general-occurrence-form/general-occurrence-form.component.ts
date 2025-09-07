@@ -28,6 +28,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ExamTypeService } from '../../../services/exam-type.service';
 
 @Component({
   selector: 'app-general-occurrence-form',
@@ -58,6 +59,7 @@ export class GeneralOccurrenceFormComponent implements OnInit {
   experts: any[] = [];
   forensicServices: any[] = [];
   occurrenceClassifications: any[] = [];
+  examTypes: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -71,6 +73,7 @@ export class GeneralOccurrenceFormComponent implements OnInit {
     private userService: UserService,
     private classificationService: OccurrenceClassificationService,
     private forensicService: ForensicService,
+    private examTypeService: ExamTypeService,
     private snackBar: MatSnackBar,
     private datePipe: DatePipe,
     private authService: AuthService
@@ -113,6 +116,7 @@ export class GeneralOccurrenceFormComponent implements OnInit {
       responsibleExpertId: [null],
       forensicServiceId: ['', Validators.required],
       occurrenceClassificationId: ['', Validators.required],
+      examTypeIds: [[]],
       additionalFields: this.fb.array([])
     });
   }
@@ -136,6 +140,7 @@ export class GeneralOccurrenceFormComponent implements OnInit {
       classifications: this.classificationService.getClassifications(1, 1000, '', '').pipe(catchError(() => of({ data: [] }))),
       forensicServices: this.forensicService.getForensicServices(1, 1000, '').pipe(catchError(() => of({ data: [] }))),
       experts: this.userService.getUsers(1, 1000, 'active', '', 'perito_oficial').pipe(catchError(() => of({ data: [] }))),
+      examTypes: this.examTypeService.getExamTypes(1, 1000, '').pipe(catchError(() => of({ data: [] }))),
     };
 
     forkJoin(dataRequests).subscribe({
@@ -147,6 +152,9 @@ export class GeneralOccurrenceFormComponent implements OnInit {
         this.experts = responses.experts?.data || [];
         this.occurrenceClassifications = responses.classifications?.data || [];
         this.forensicServices = responses.forensicServices?.data || [];
+        console.log('ExamTypes Response:', responses.examTypes); // DEBUG
+        this.examTypes = responses.examTypes?.data || [];
+        console.log('ExamTypes Final:', this.examTypes); // DEBUG
 
         if (this.isEditMode && this.occurrenceId) {
           this.loadOccurrenceData(this.occurrenceId);
@@ -180,6 +188,7 @@ export class GeneralOccurrenceFormComponent implements OnInit {
             occurrenceClassificationId: occurrence.occurrenceClassification?.id || null,
             occurrenceDate: occurrenceDateTime,
             occurrenceTime: this.datePipe.transform(occurrenceDateTime, 'HH:mm'),
+            examTypeIds: occurrence.examTypes?.map((et: any) => et.id) || [],
           });
 
           let additionalFieldsData = occurrence.additionalFields;

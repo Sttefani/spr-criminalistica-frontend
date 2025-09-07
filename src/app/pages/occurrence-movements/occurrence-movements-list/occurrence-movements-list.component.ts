@@ -19,6 +19,8 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ExtendDeadlineDialogComponent } from '../extend-deadline-dialog/extend-deadline-dialog';
 import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ChangeStatusDialogComponent } from '../change-status-dialog/change-status-dialog.component';
 @Component({
   selector: 'app-occurrence-movements-list',
   standalone: true,
@@ -36,7 +38,8 @@ import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
     MatInputModule,
     FormsModule,
     MatFormFieldModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSlideToggleModule
 ],
   templateUrl: './occurrence-movements-list.html',
   styleUrls: ['./occurrence-movements-list.scss']
@@ -59,6 +62,8 @@ export class OccurrenceMovementsListComponent implements OnInit {
   totalItems = 0;
   totalPages = 0;
   isLoadingMore = false;
+  showOnlyMyOccurrences = false;
+  canChangeStatus = false;
 
   constructor(
     private movementsService: OccurrenceMovementsService,
@@ -71,6 +76,7 @@ export class OccurrenceMovementsListComponent implements OnInit {
     this.userRole = this.authService.getUserRole();
     this.isSuperAdmin = this.userRole === 'super_admin';
     this.canAddMovement = ['super_admin', 'servidor_administrativo', 'perito_oficial'].includes(this.userRole || '');
+    this.canChangeStatus = ['super_admin', 'servidor_administrativo'].includes(this.userRole || '');
 
     this.loadOccurrences();
   }
@@ -81,18 +87,17 @@ loadOccurrences(): void {
   this.movementsService.getOccurrencesWithDeadlineStatus(
     this.currentPage,
     this.pageSize,
-    this.searchTerm
+    this.searchTerm,
+    this.showOnlyMyOccurrences
   ).subscribe({
     next: (response: any) => {
       console.log('=== RESPOSTA PAGINADA ===');
       console.log('Dados:', response.data);
       console.log('Paginação:', response.pagination);
 
-      // Atualizar dados
       this.occurrences = response.data || [];
       this.filteredOccurrences = [...this.occurrences];
 
-      // Atualizar metadados de paginação
       this.totalItems = response.pagination?.total || 0;
       this.totalPages = response.pagination?.totalPages || 0;
       this.currentPage = response.pagination?.page || 1;
@@ -104,6 +109,11 @@ loadOccurrences(): void {
       this.isLoading = false;
     }
   });
+}
+
+onMyOccurrencesToggle(): void {
+  this.currentPage = 1; // Volta para primeira página
+  this.loadOccurrences();
 }
   filterOccurrences(): void {
   // Aplicar trim no termo de busca
@@ -140,29 +150,58 @@ clearSearch(): void {
     return 'normal';
   }
 
-  getDeadlineIcon(occurrence: any): string {
-    const status = this.getDeadlineStatus(occurrence);
-    switch (status) {
-      case 'overdue': return 'error';
-      case 'warning': return 'warning';
-      default: return 'schedule';
-    }
+getDeadlineIcon(occurrence: any): string {
+  // Se ocorrência finalizada, mostrar ícone específico
+  if (occurrence.status === 'CONCLUIDA') {
+    return 'check_circle'; // Ícone de conclusão
   }
+
+  if (occurrence.status === 'CANCELADA') {
+    return 'cancel'; // Ícone de cancelamento
+  }
+
+  // Para ocorrências em andamento, usar a lógica de prazo normal
+  const status = this.getDeadlineStatus(occurrence);
+  switch (status) {
+    case 'overdue': return 'error';
+    case 'warning': return 'warning';
+    default: return 'schedule';
+  }
+}
 
   getDeadlineColor(occurrence: any): string {
-    const status = this.getDeadlineStatus(occurrence);
-    switch (status) {
-      case 'overdue': return 'warn';
-      case 'warning': return 'accent';
-      default: return 'primary';
-    }
+  // Se ocorrência finalizada, cor específica
+  if (occurrence.status === 'CONCLUIDA') {
+    return 'primary'; // Verde
   }
 
-  getDeadlineTooltip(occurrence: any): string {
-    if (occurrence.isOverdue) return 'Prazo esgotado!';
-    if (occurrence.isNearDeadline) return 'Prazo próximo do vencimento';
-    return 'Prazo dentro do normal';
+  if (occurrence.status === 'CANCELADA') {
+    return 'warn'; // Vermelho
   }
+
+  // Para ocorrências em andamento, usar a lógica de prazo normal
+  const status = this.getDeadlineStatus(occurrence);
+  switch (status) {
+    case 'overdue': return 'warn';
+    case 'warning': return 'accent';
+    default: return 'primary';
+  }
+}
+
+  getDeadlineTooltip(occurrence: any): string {
+  if (occurrence.status === 'CONCLUIDA') {
+    return 'Ocorrência concluída';
+  }
+
+  if (occurrence.status === 'CANCELADA') {
+    return 'Ocorrência cancelada';
+  }
+
+  // Para ocorrências em andamento
+  if (occurrence.isOverdue) return 'Prazo esgotado!';
+  if (occurrence.isNearDeadline) return 'Prazo próximo do vencimento';
+  return 'Prazo dentro do normal';
+}
 
   addMovement(occurrence: any): void {
     const dialogRef = this.dialog.open(AddMovementDialogComponent, {
@@ -258,6 +297,39 @@ viewMovements(occurrence: any): void {
         error: (error) => {
           console.error('Erro ao prorrogar prazo:', error);
           this.snackBar.open('Erro ao prorrogar prazo', 'Fechar', { duration: 3000 });
+        }
+      });
+    }
+  });
+}
+changeStatus(occurrence: any): void {
+  const dialogRef = this.dialog.open(ChangeStatusDialogComponent, {
+    width: '500px',
+    data: {
+      occurrenceId: occurrence.id,
+      caseNumber: occurrence.caseNumber,
+      currentStatus: occurrence.status
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      this.movementsService.changeOccurrenceStatus(
+        result.occurrenceId,
+        result.newStatus,
+        result.observations
+      ).subscribe({
+        next: (response) => {
+          this.snackBar.open(
+            `Status alterado para ${result.newStatus === 'CONCLUIDA' ? 'Concluída' : 'Cancelada'}!`,
+            'Fechar',
+            { duration: 3000 }
+          );
+          this.loadOccurrences();
+        },
+        error: (error) => {
+          console.error('Erro ao alterar status:', error);
+          this.snackBar.open('Erro ao alterar status', 'Fechar', { duration: 3000 });
         }
       });
     }

@@ -44,52 +44,121 @@ export class OccurrenceDetailsDialogComponent {
     return Object.entries(this.data.additionalFields).map(([key, value]) => ({ key, value }));
   }
 
-  generatePdf(): void {
-    const doc = new jsPDF();
-    const title = `Relatório da Ocorrência: ${this.data.caseNumber}`;
-    doc.setFontSize(18);
-    doc.text(title, 14, 20);
+generatePdf(): void {
+  const doc = new jsPDF();
+  const title = `Relatório da Ocorrência: ${this.data.caseNumber}`;
 
-    // Corpo do PDF usando autoTable
-    autoTable(doc, {
-      startY: 30,
-      head: [['Campo', 'Detalhe']],
-      body: [
-        ['Data e Hora', new DatePipe('en-US').transform(this.data.occurrenceDate, 'dd/MM/yyyy HH:mm')],
-        ['Procedimento', `${this.data.procedure?.name || '-'} (${this.data.procedureNumber || 'N/A'})`],
-        ['Classificação', this.data.occurrenceClassification?.name || '-'],
-        ['Cidade', `${this.data.city?.name || '-'} - ${this.data.city?.state || ''}`],
-        ['Status', this.data.status.replace('_', ' ')],
-        ['Unidade Demandante', this.data.requestingUnit?.name || '-'],
-        ['Autoridade Requisitante', this.data.requestingAuthority?.name || '-'],
-        ['Perito Responsável', this.data.responsibleExpert?.name || 'Não Atribuído'],
-        ['Serviço Pericial', this.data.forensicService?.name || '-'],
-        ['Registrado Por', this.data.createdBy?.name || '-'],
-      ],
-      theme: 'grid'
-    });
+  // Título menor
+  doc.setFontSize(16);
+  doc.text(title, 14, 15);
 
-    const lastTableY = (doc as any).lastAutoTable.finalY;
+  // Dados principais - tabela mais compacta
+  autoTable(doc, {
+    startY: 25,
+    head: [['Campo', 'Detalhe']],
+    body: [
+      ['Data/Hora', new DatePipe('en-US').transform(this.data.occurrenceDate, 'dd/MM/yyyy HH:mm')],
+      ['Procedimento', `${this.data.procedure?.name || '-'} (${this.data.procedureNumber || 'N/A'})`],
+      ['Classificação', this.data.occurrenceClassification?.name || '-'],
+      ['Cidade', `${this.data.city?.name || '-'} - ${this.data.city?.state || ''}`],
+      ['Status', this.data.status.replace('_', ' ')],
+      ['Unidade', this.data.requestingUnit?.name || '-'],
+      ['Autoridade', this.data.requestingAuthority?.name || '-'],
+      ['Perito', this.data.responsibleExpert?.name || 'Não Atribuído'],
+      ['Serviço', this.data.forensicService?.name || '-'],
+      ['Registrado por', this.data.createdBy?.name || '-'],
+    ],
+    theme: 'grid',
+    styles: {
+      fontSize: 9,
+      cellPadding: 2
+    },
+    columnStyles: {
+      0: { fontStyle: 'bold', cellWidth: 35 },
+      1: { cellWidth: 145 }
+    }
+  });
 
-    // Título da seção Histórico
+  let currentY = (doc as any).lastAutoTable.finalY;
+
+  // Informações de Finalização - compacta
+  if (this.data.status === 'CONCLUIDA' || this.data.status === 'CANCELADA') {
+    const statusFinal = this.data.status === 'CONCLUIDA' ? 'Concluída' : 'Cancelada';
+    const dataFinalizacao = new DatePipe('en-US').transform(this.data.updatedAt, 'dd/MM/yyyy HH:mm');
+
     doc.setFontSize(12);
-    doc.text('Histórico da Ocorrência', 14, lastTableY + 15);
+    doc.text('Finalização', 14, currentY + 8);
 
-    doc.setFontSize(10);
-    doc.text(this.data.history, 14, lastTableY + 22, { maxWidth: 180 });
+    const finalizationBody = [
+      ['Status Final', statusFinal],
+      ['Data', dataFinalizacao || '-']
+    ];
 
-    if (this.hasAdditionalFields()) {
-        let additionalFieldsY = lastTableY + 22 + 20;
-        doc.setFontSize(12);
-        doc.text('Campos Adicionais', 14, additionalFieldsY);
-        autoTable(doc, {
-            startY: additionalFieldsY + 7,
-            head: [['Chave', 'Valor']],
-            body: this.getAdditionalFields().map(f => [f.key, String(f.value)]),
-            theme: 'grid'
-        });
+    if (this.data.statusChangeObservations) {
+      finalizationBody.push(['Observações', this.data.statusChangeObservations]);
     }
 
-    doc.save(`ocorrencia_${this.data.caseNumber}.pdf`);
+    autoTable(doc, {
+      startY: currentY + 12,
+      head: [['Campo', 'Info']],
+      body: finalizationBody,
+      theme: 'grid',
+      styles: {
+        fontSize: 8,
+        cellPadding: 2
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 25 },
+        1: { cellWidth: 155 }
+      }
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY;
   }
+
+  // Histórico - mais compacto
+  doc.setFontSize(11);
+  doc.text('Histórico', 14, currentY + 8);
+  doc.setFontSize(8);
+
+  // Quebrar texto em múltiplas linhas se necessário
+  const splitHistory = doc.splitTextToSize(this.data.history, 180);
+  doc.text(splitHistory, 14, currentY + 14);
+
+  // Calcular altura do texto do histórico
+  const historyHeight = splitHistory.length * 3;
+  currentY += 14 + historyHeight;
+
+  // Campos Adicionais - compactos
+  if (this.hasAdditionalFields()) {
+    doc.setFontSize(11);
+    doc.text('Campos Adicionais', 14, currentY + 5);
+
+    autoTable(doc, {
+      startY: currentY + 9,
+      head: [['Campo', 'Valor']],
+      body: this.getAdditionalFields().map(f => [f.key, String(f.value)]),
+      theme: 'grid',
+      styles: {
+        fontSize: 8,
+        cellPadding: 2
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 35 },
+        1: { cellWidth: 145 }
+      }
+    });
+  }
+
+  // Rodapé
+  const pageHeight = doc.internal.pageSize.height;
+  doc.setFontSize(7);
+  doc.text(
+    `Gerado em: ${new DatePipe('en-US').transform(new Date(), 'dd/MM/yyyy HH:mm')}`,
+    14,
+    pageHeight - 10
+  );
+
+  doc.save(`ocorrencia_${this.data.caseNumber}.pdf`);
+}
 }

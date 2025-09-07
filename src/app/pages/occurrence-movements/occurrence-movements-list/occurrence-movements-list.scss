@@ -215,51 +215,51 @@ table {
 }
 
 // ==============================================
-// PRAZOS - COMPACTOS
+// FORÇA BRUTA PARA ÍCONES DA COLUNA PRAZO
 // ==============================================
-.deadline-cell {
-  .deadline-container {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+::ng-deep .deadline-cell mat-icon {
+  &[color="primary"] {
+    color: #4caf50 !important;
   }
 
-  .deadline-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+  &[color="accent"] {
+    color: #ff9800 !important;
   }
 
-  .deadline-text {
-    font-weight: 500;
-    font-size: 12px;
-
-    &.overdue {
-      color: #f44336;
-      font-weight: 600;
-    }
-
-    &.warning {
-      color: #ff9800;
-      font-weight: 600;
-    }
-
-    &.normal {
-      color: #4caf50;
-    }
+  &[color="warn"] {
+    color: #f44336 !important;
   }
 }
 
-.row-overdue {
-  background-color: rgba(244, 67, 54, 0.05);
-  border-left: 3px solid #f44336;
+// AINDA MAIS ESPECÍFICO
+::ng-deep .mat-mdc-cell .deadline-cell .deadline-icon {
+  &[color="primary"] {
+    color: #4caf50 !important;
+  }
+
+  &[color="accent"] {
+    color: #ff9800 !important;
+  }
+
+  &[color="warn"] {
+    color: #f44336 !important;
+  }
 }
 
-.row-warning {
-  background-color: rgba(255, 152, 0, 0.05);
-  border-left: 3px solid #ff9800;
-}
+// ÚLTIMA TENTATIVA - ATINGIR DIRETAMENTE
+::ng-deep mat-table .deadline-icon {
+  &[color="primary"] {
+    color: #4caf50 !important;
+  }
 
+  &[color="accent"] {
+    color: #ff9800 !important;
+  }
+
+  &[color="warn"] {
+    color: #f44336 !important;
+  }
+}
 // ==============================================
 // STATUS CHIPS - MENORES
 // ==============================================
@@ -411,4 +411,17 @@ mat-paginator {
   .legend-items {
     justify-content: center;
   }
+  .legend-item {
+  mat-icon {
+    &[color="primary"] {
+      color: #4caf50 !important;
+    }
+    &[color="accent"] {
+      color: #ff9800 !important;
+    }
+    &[color="warn"] {
+      color: #f44336 !important;
+    }
+  }
+}
 }
